@@ -1,6 +1,8 @@
 $( function(){
 
+//###########################################################################
 //ATTRIBUTES
+//###########################################################################
     //wordbox_style?? (better in CSS-file)
     //infobox_style?? (better in CSS-file)
     var button_go=$('#button_go');
@@ -12,18 +14,63 @@ $( function(){
     
     var noword_char= ",;:.?!<> "; //no -,'
 
+//###########################################################################
+//VALUES
+//###########################################################################
+    var word_div_class = "word_div";
+    var word_class = "word";
+    var word_id = "word";
+    var transl_class = "transl";
+    var transl_id = "transl";
 
 
-
-
+//###########################################################################
 //FUNCTIONS
-
-
+//###########################################################################
+    //ERRORS
+    //++++++++++++++++++++++++++++++++++++++++++++++++++
     var err_noinput= function(){console.log('no input');};
+    var err_nomatchingword = function(){console.log('no matching word');};
 
 
+    //CREATE
+    //+++++++++++++++++++++++++++++++++++++++++++++++++++
+    var create_transl_div = function(i)
+    {
+	//check, whether wordi exists:
+	if($('#word'+i))
+	{
+	    var transl = $('<div>')
+		    .attr({'id' : transl_id + i, 'class' : transl_class})
+		    .text("blabla"+i); //for debugging
+	    
+	    //transl.hide();
+	    return transl;
+	}
+	else {err_nomatchingword(); return null;}
+    };
 
-    var create_txt = function()
+
+    //----------------------------------------------------
+
+
+    var create_word_div = function(i, text)
+    {
+	var word_div = $('<div>')
+		.attr({'id': word_id + i , 'class' : word_div_class});
+	var word = $('<span>').text(text)
+		.attr({'id': word_id + i , 'class' : word_class})
+		.appendTo(word_div);
+	var transl = create_transl_div(i)
+		.appendTo(word_div);
+	
+	return word_div;
+    };
+
+    
+    //EXTRACTION
+    //+++++++++++++++++++++++++++++++++++++++++++++++++++++
+    var extract_txt = function()
     {
 	//variables
 	var str=txtin.get(0).value;
@@ -36,8 +83,6 @@ $( function(){
 	var word_arr = [];
 	var word_pattern = new RegExp("((<br){0}[^"+noword_char+"](br>){0}){1,}", "g");
 	var noword_pattern = "";
-	var word_div;
-	var word_transl;
 
 	//words
 	word_arr = str.match(word_pattern);
@@ -46,7 +91,7 @@ $( function(){
 	    if(word_arr[i]=="br"){word_arr.splice(i, 1); i--;};
 	};
 	    
-	//actual text creation
+	//ACTUAL TEXT CREATION
 	for (var i=0; i<word_arr.length; i++)
 	{
 	    //get next word
@@ -67,20 +112,18 @@ $( function(){
 		noword=""; //reset	
 	    };
 	    
-	    //create+insert word text
-	    word_div = $('<div>').attr({'id': "wdiv"+i});
-	    word = $('<span>').text(word).appendTo(word_div);
-	    word_transl = $('<div>')
-		.attr({'id' : "transl"+i, 'text':"blabla"+i })
-		.appendTo(word_div);
 	    
-	    TXT.appendChild(word_div.get(0));		    
-	    };
+	    TXT.appendChild(create_word_div(i, word).get(0));		    
+	};
 	
+	return true;
     	
     };
-	//create <span>-objects from single words
-	//create corresponding <div>-objects for the words
+	
+
+//###########################################################################
+// 
+//###########################################################################	
 	//css properties
 	//eventhandler
 	//.appendTo(txt);
@@ -89,7 +132,7 @@ $( function(){
 
 
 //EVENTHANDLERS
-    button_go.click(create_txt);
+    button_go.click(extract_txt);
     //event with id 
     button_go.bind('mouseover', function(){console.log('Mouse over GO');
 					  console.log(this);//obj that triggered
