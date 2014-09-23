@@ -3,15 +3,19 @@ body
     font-family:  Times;
 }
 
-div>div>div>div
+.transl
 {
-    visibility:visible;
-    background-color: blue;
-    width: 3cm; height: 2cm;
+    position: absolute; left: 1.5em;
+    border-color: blue; border-style: solid;
+    width: 4cm; height:4em;
 }
 
-div>div>div
-{display: inline-block;}
+.word_div
+{
+    position: relative;
+    display: inline-block;
+    border-color: yellow; border-style: double;
+}
 
 span, div
 {
@@ -20,5 +24,6 @@ span, div
 
 span
 {
-        display: inline-block;
+    position: relative;
+    display: inline-block;
 }

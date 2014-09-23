@@ -1,4 +1,4 @@
-$( function(){
+//$( function(){
 
 //###########################################################################
 //ATTRIBUTES
@@ -13,15 +13,27 @@ $( function(){
     var TXTIN=txtin.get(0);
     
     var noword_char= ",;:.?!<> "; //no -,'
-
 //###########################################################################
 //VALUES
 //###########################################################################
     var word_div_class = "word_div";
+    var word_div_id = "word_div";
     var word_class = "word";
     var word_id = "word";
     var transl_class = "transl";
     var transl_id = "transl";
+    var transl_height = "-4.5em";
+
+    var transl_stylebelow =
+	    {'top' : "2em"};
+    var transl_styleover = 
+	    {'top' : transl_height};
+
+
+//###########################################################################
+//PREDEFINITIONS
+//###########################################################################
+    var set_word_events;
 
 
 //###########################################################################
@@ -35,6 +47,16 @@ $( function(){
 
     //CREATE
     //+++++++++++++++++++++++++++++++++++++++++++++++++++
+    var create_word = function(i, text)
+    {
+	var word = $('<span>').text(text)
+		.attr({'id': word_id + i , 'class' : word_class});
+	
+	return word;
+    };
+
+    //----------------------------------------------------
+
     var create_transl_div = function(i)
     {
 	//check, whether wordi exists:
@@ -44,7 +66,7 @@ $( function(){
 		    .attr({'id' : transl_id + i, 'class' : transl_class})
 		    .text("blabla"+i); //for debugging
 	    
-	    //transl.hide();
+	    transl.hide();
 	    return transl;
 	}
 	else {err_nomatchingword(); return null;}
@@ -57,12 +79,11 @@ $( function(){
     var create_word_div = function(i, text)
     {
 	var word_div = $('<div>')
-		.attr({'id': word_id + i , 'class' : word_div_class});
-	var word = $('<span>').text(text)
-		.attr({'id': word_id + i , 'class' : word_class})
+		.attr({'id': word_div_id + i , 'class' : word_div_class});
+	var word = create_word(i, text)
 		.appendTo(word_div);
-	var transl = create_transl_div(i)
-		.appendTo(word_div);
+//	var transl = create_transl_div(i)
+//		.appendTo(word_div);
 	
 	return word_div;
     };
@@ -115,14 +136,48 @@ $( function(){
 	    
 	    TXT.appendChild(create_word_div(i, word).get(0));		    
 	};
+
+
+	//set events
+	set_word_events();
+	
+
+	//hide textarea
+	txtin.hide();
+	button_go.hide();
 	
 	return true;
     	
     };
-	
 
+
+
+    //GET
+    //----------------------------------------------------
+    var load_transl = function(i)
+    {
+	console.log("transl"+i+" now initialized: " + $('#'+transl_id+i).get(0));
+    };
+
+
+    var init_transl = function(i)
+    {
+	if($("#"+transl_id+i).length) {console.log("transl"+i + " already initialized");}
+	else {
+	    var wdiv= $('#'+word_div_id+i); console.log(wdiv.get(0));
+	    console.log(!wdiv);
+	    if(wdiv.length)
+		{
+		    create_transl_div(i).appendTo(wdiv);
+		    load_transl(i);
+		    return true;
+		}
+	    else {err_nomatchingword(); return false;}
+	    };
+    };
+    
 //###########################################################################
-// 
+//...... 
 //###########################################################################	
 	//css properties
 	//eventhandler
@@ -134,11 +189,46 @@ $( function(){
 //EVENTHANDLERS
     button_go.click(extract_txt);
     //event with id 
-    button_go.bind('mouseover', function(){console.log('Mouse over GO');
-					  console.log(this);//obj that triggered
+    button_go.bind('mouseover', function()
+		   {console.log(this);//obj that triggered
 					  });
     
 
+    //RESET BUTTON EVENT
+    //MOUSEMOVED-EVENT FOR CURRENT WORD
+
+
+
+    set_word_events = function ()
+    {
+	    $('.word').each(function(i, v)
+			    {
+				$(v).bind('mouseenter', function(){ 
+				    //MOUSE ON WORD:
+				    //check, whether translation loaded			  
+				    var id = parseInt(v.id.charAt(v.id.length - 1));
+				    init_transl(id);
+				    //show translation
+	//CHOOSE CORRECT STYLE (OVER, BELOW)!!!!!!!!!!!!!!!!!!!!!
+				    $('#'+transl_id+id).css(transl_styleover).show();
+        //ATTACH MOUSEMOVED EVENT TO ADJUST TRANSL-POSITION
+				    //style change for word: IN CSS!!
+				});
+			    });
+	
+	$('.word').each(function(i, v)
+			{
+			    $(v).bind('mouseleave', function(){
+				//MOUSE OFF WORD:
+				var id = parseInt(v.id.charAt(v.id.length - 1));
+				$('#'+transl_id+id).hide();
+				//reset word style: IN CSS!!
+	//REMOVE MOUSEMOVED EVENT!!!!!!!!!!!!!!!!
+			    });
+			});
+	
+	
+    };
     
 
 
@@ -147,6 +237,13 @@ $( function(){
 
 
 
+//DEBUGGING:
+extract_txt();    
+   
 
 
-});
+
+
+
+
+//});
