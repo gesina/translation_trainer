@@ -14,7 +14,8 @@
     var txtin=$('#txtin');
     var TXTIN=txtin.get(0);
     
-    var noword_char= ",;:.?!<> \(\)"; //no -,'
+    var noword_char= "\\\\,;:!<> \\.\\?\\$\\^\\{\\}\\[\\]\\(\\)\\+\\*\\|";
+	   // + ",;:!<> "; //no -,'
 //###########################################################################
 //VALUES
 //###########################################################################
@@ -89,8 +90,6 @@
 		.attr({'id': word_div_id + i , 'class' : word_div_class});
 	var word = create_word(i, text)
 		.appendTo(word_div);
-//	var transl = create_transl_div(i)
-//		.appendTo(word_div);
 	
 	return word_div;
     };
@@ -100,6 +99,7 @@
     //+++++++++++++++++++++++++++++++++++++++++++++++++++++
     var extract_txt = function()
     {
+	console.log("extracting text ...");
 	//variables
 	var str=txtin.get(0).value;
 	if(str.length===0) { err_noinput(); return false;}
@@ -204,8 +204,11 @@
     
     var reset_input = function()
     {
-	$('#txtin').empty().show();
-	$('#txt').empty().hide();
+	txt.empty().hide();
+	button_reset.hide();
+	txtin.empty().show();
+	button_go.show();
+
     };
 
 
@@ -219,13 +222,13 @@
 //EVENTHANDLERS
     button_go.click(extract_txt);
     //event with id 
-    button_go.bind('mouseover', function()
+    button_go.on('mouseover', function()
 		   {console.log(this);//obj that triggered
 					  });
     
 
     //RESET BUTTON EVENT
-    
+    button_reset.on('click', reset_input);
 
 
 

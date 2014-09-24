@@ -14,16 +14,26 @@ body
 {
     position: relative;
     display: inline-block;
-    border-color: yellow; border-style: double;
 }
 
-span, div
+.word, .word_div
 {
     margin: 0;
 }
 
-span
+.word
 {
     position: relative;
     display: inline-block;
+}
+
+.word:hover
+{
+    border-radius: 0.5em;
+    background-color: green;
+}
+
+textarea
+{
+    width:80%; height:10em;
 }
