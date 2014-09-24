@@ -7,12 +7,14 @@
     //infobox_style?? (better in CSS-file)
     var button_go=$('#button_go');
     var BUTTON_GO=button_go.get(0);
+    var button_reset=$('#button_reset');
+    var BUTTON_RESET=$('#button_reset').get(0);
     var txt=$('#txt');
     var TXT=txt.get(0);
     var txtin=$('#txtin');
     var TXTIN=txtin.get(0);
     
-    var noword_char= ",;:.?!<> "; //no -,'
+    var noword_char= ",;:.?!<> \(\)"; //no -,'
 //###########################################################################
 //VALUES
 //###########################################################################
@@ -24,11 +26,12 @@
     var transl_id = "transl";
     var transl_height = "-4.5em";
 
-    var transl_stylebelow =
-	    {'top' : "2em"};
-    var transl_styleover = 
-	    {'top' : transl_height};
-
+    var transl_stylebelow = function(id){return {'top' : "1em"};};
+    var transl_styleover = function(id){
+	var t = $('#'+transl_id+id);
+	if(t){ return {'top' : (-t.height()-0.5*$('#'+word_id+id).height()).toString()+"px"};}
+	else { err_nomatchingtransl(); return false;}
+    };
 
 //###########################################################################
 //PREDEFINITIONS
@@ -43,7 +46,7 @@
     //++++++++++++++++++++++++++++++++++++++++++++++++++
     var err_noinput= function(){console.log('no input');};
     var err_nomatchingword = function(){console.log('no matching word');};
-
+    var err_nomatchingtransl= function(){console.log('no matching translation');};
 
     //CREATE
     //+++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -54,6 +57,10 @@
 	
 	return word;
     };
+
+    //---------------------------------------------------
+
+    var get_word_id = function(v){return parseInt(v.id.slice(word_id.length));};
 
     //----------------------------------------------------
 
@@ -153,7 +160,7 @@
 
 
     //GET
-    //----------------------------------------------------
+    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     var load_transl = function(i)
     {
 	console.log("transl"+i+" now initialized: " + $('#'+transl_id+i).get(0));
@@ -164,9 +171,8 @@
     {
 	if($("#"+transl_id+i).length) {console.log("transl"+i + " already initialized");}
 	else {
-	    var wdiv= $('#'+word_div_id+i); console.log(wdiv.get(0));
-	    console.log(!wdiv);
-	    if(wdiv.length)
+	    var wdiv= $('#'+word_div_id+i);
+	    if(wdiv.length) //word_div already defined?
 		{
 		    create_transl_div(i).appendTo(wdiv);
 		    load_transl(i);
@@ -175,10 +181,34 @@
 	    else {err_nomatchingword(); return false;}
 	    };
     };
+
+
+    
     
 //###########################################################################
-//...... 
+// DISPLAY
 //###########################################################################	
+
+    var show_transl = function(id)
+    {
+	var t = $('#'+transl_id+id);
+	if(t){ //transl exists?
+	    var w = $('#'+word_id+id);
+	    if(event.clientY < w.offset().top + 0.5*w.height())
+	    { t.css(transl_styleover(id)).show();}	    
+	    else {t.css(transl_stylebelow(id)).show();};
+		}
+	else {err_nomatchingtransl(); return false;}
+    };
+
+    
+    var reset_input = function()
+    {
+	$('#txtin').empty().show();
+	$('#txt').empty().hide();
+    };
+
+
 	//css properties
 	//eventhandler
 	//.appendTo(txt);
@@ -195,43 +225,42 @@
     
 
     //RESET BUTTON EVENT
-    //MOUSEMOVED-EVENT FOR CURRENT WORD
+    
 
 
 
-    set_word_events = function ()
-    {
-	    $('.word').each(function(i, v)
-			    {
-				$(v).bind('mouseenter', function(){ 
-				    //MOUSE ON WORD:
-				    //check, whether translation loaded			  
-				    var id = parseInt(v.id.charAt(v.id.length - 1));
-				    init_transl(id);
-				    //show translation
-	//CHOOSE CORRECT STYLE (OVER, BELOW)!!!!!!!!!!!!!!!!!!!!!
-				    $('#'+transl_id+id).css(transl_styleover).show();
-        //ATTACH MOUSEMOVED EVENT TO ADJUST TRANSL-POSITION
-				    //style change for word: IN CSS!!
-				});
-			    });
-	
-	$('.word').each(function(i, v)
-			{
-			    $(v).bind('mouseleave', function(){
-				//MOUSE OFF WORD:
-				var id = parseInt(v.id.charAt(v.id.length - 1));
-				$('#'+transl_id+id).hide();
-				//reset word style: IN CSS!!
-	//REMOVE MOUSEMOVED EVENT!!!!!!!!!!!!!!!!
-			    });
-			});
+    set_word_events = function (){ //defined above
+	$('.word').each(function(i, v){
+	    //MOUSENETER
+	    $(v).bind('mouseenter', function(){ 
+		//check, whether translation loaded			  
+		var id = get_word_id(v);
+		init_transl(id);
+		//show translation (with correct style)
+		show_transl(id);				
+		//STYLE CHANGE for word: IN CSS!!!!!!!!!!!!!!!!!!!!!!!!
+	    });
+	    
+	    //MOUSEMOVE
+	    $(v).on('mousemove', function(){
+		//check transl pos
+		show_transl(get_word_id(v));
+	    });
+
+	    //MOUSELEAVE
+	    $(v).on('mouseleave', function(){
+		//hide transl
+		$('#'+transl_id+get_word_id(v)).hide();
+		
+		//RESET WORD STYLE: IN CSS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	    });
+	});
 	
 	
     };
     
-
-
+	
+	
 
 
 
