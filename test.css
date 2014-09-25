@@ -5,7 +5,8 @@ body
 
 .transl
 {
-    position: absolute; left: 1.5em;
+    position: absolute;
+    background-color: yellow; z-index: 10;
     border-color: blue; border-style: solid;
     width: 4cm; height:4em;
 }
@@ -14,6 +15,7 @@ body
 {
     position: relative;
     display: inline-block;
+    border-style: double; border-color:yellow;
 }
 
 .word, .word_div
@@ -27,7 +29,7 @@ body
     display: inline-block;
 }
 
-.word:hover
+.word_div:hover
 {
     border-radius: 0.5em;
     background-color: green;
@@ -36,4 +38,9 @@ body
 textarea
 {
     width:80%; height:10em;
+}
+
+.transl>textarea
+{
+    height: 7em;
 }
