@@ -175,11 +175,10 @@ var extract_txt = function()
 
 
     //hide textarea
-    txtin.hide();
-    button_go.hide();
-    txt.show();
-    button_reset.show();
     
+    $('#input').hide();
+    $('#output').show();
+
     
     return true;
     
@@ -287,14 +286,15 @@ var show_transl = function(id)
 };
 
 
+
 //-----------------------------------------------------
 
 var reset_input = function()
 {
-    txt.empty().hide();
-    button_reset.hide();
-    txtin.empty().show();
-    button_go.show();
+    $('#output').hide();
+    txtin.empty();
+    txt.empty();
+    $('#input').show();
 };
 
 

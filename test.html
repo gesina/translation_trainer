@@ -20,26 +20,33 @@
 	<p><small>(For more info see <a href="#Howto">below</a>.)</small></p>
    </article>
 
-    <div id="main">
+    <div id="input">
       <textarea id="txtin"
-		placeholder="Enter your text here">so viel text.</textarea>
+		placeholder="Enter your text here">Ein bisschen text.</textarea>
       
-      <div id="txt"></div>
-
       <button id="button_go">GO</button>
-      <button id="button_reset" hidden>RESET</button>
-      <article>
-	<p>Hier soll mal eine Kurzbeschreibung oder ähnliches stehen.</p>
-      </article>
-      <article>
-	<a id="Howto"></a><h1>Howto</h1>
-	<p>Hier wird die Bedienungsanleitung stehen (falls nötig).</p>
-      </article>
-      <footer>
-	<p><small>Diese Seite gehört mir! lg Gesina Schwalbe</small></p>
-      </footer>
 
-      <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.js"></script>
-      <script src="test.js"></script>
+      <input id="filein" type="file"/>
+      <button id="button_file">Load up</button>
+    </div>
+
+    <div id="output">
+      <div id="txt"></div>
+      <button id="button_reset">RESET</button>
+    </div>
+
+    <article>
+      <p>Hier soll mal eine Kurzbeschreibung oder ähnliches stehen.</p>
+    </article>
+    <article>
+      <a id="Howto"></a><h1>Howto</h1>
+      <p>Hier wird die Bedienungsanleitung stehen (falls nötig).</p>
+    </article>
+    <footer>
+      <p><small>Diese Seite gehört mir! lg Gesina Schwalbe</small></p>
+    </footer>
+    
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.js"></script>
+    <script src="test.js"></script>
   </BODY>
 </HTML>
