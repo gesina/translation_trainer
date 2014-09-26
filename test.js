@@ -5,14 +5,19 @@
 //###########################################################################
 var button_go=$('#button_go');
 var BUTTON_GO=button_go.get(0);
+var button_add=$('#button_add');
+var BUTTON_ADD=button_add.get(0);
 var button_reset=$('#button_reset');
 var BUTTON_RESET=$('#button_reset').get(0);
 var txt=$('#txt');
 var TXT=txt.get(0);
 var txtin=$('#txtin');
 var TXTIN=txtin.get(0);
+var filein=$('#filein');
+var FILEIN=filein.get(0);
 
-var noword_char= "\\\\,;:!<> \\.\\?\\$\\^\\{\\}\\[\\]\\(\\)\\+\\*\\|";
+var noword_char= "\\\\,\\.\\?\\$\\^\\{\\}\\[\\]\\(\\)\\+\\*\\|"
+	+";:!<> \"#~§%&@";
 
 //###########################################################################
 //VALUES
@@ -81,7 +86,7 @@ var create_transl_div = function(i)
     {
 	var transl = $('<div>')
 		.attr({'id' : transl_id + i, 'class' : transl_class})
-		.text("blabla"+i); //for debugging
+		.text("blabla "+i); //for debugging
 	
 	transl.hide();
 	return transl;
@@ -119,12 +124,12 @@ var get_word_div_id = function(v){
 
 //   EXTRACTION
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++
-var extract_txt = function()
+var extract_txt = function(str)
 {
     console.log("extracting text ..."); //start
-
+    $('#output').show();
     //variables
-    var str=txtin.val();
+    //var str=txtin.val();
     if(str.length===0) { err_noinput(); return false;}
     str = str.replace(/\n/g, "<br>"); //html-newlines
 
@@ -169,6 +174,13 @@ var extract_txt = function()
 	TXT.appendChild(create_word_div(i, word).get(0));		    
     };
 
+    //last noword-phrase
+    if(str.length) //still chars left?
+    {
+	TXT.innerHTML=(TXT.innerHTML + str);
+    };
+    
+    
 
     //set event handlers
     $('.word_div').each(function(i, v){set_word_div_events($(v));});
@@ -186,16 +198,129 @@ var extract_txt = function()
 
 
 
+//----------------------------------------------------
+
+
+
+var extract_txtin = function() { extract_txt(txtin.val()); };
+
+
+var extract_filein = function(evt)
+{
+
+    console.log("About to read the file ...");
+                                           
+    var currfile = evt.target.files[0];
+    var reader = new FileReader();
+
+    //when loaded
+    reader.onload = (function(file) {
+        return function(e) {
+            //debug info
+	    console.log(
+                "FILE: "+file.name+", "+file.type+", "
+                    +file.size+", "+file.lastModifiedDate.toLocaleDateString());
+
+	    console.log (e.target.result);
+            extract_txt(e.target.result);
+
+	    console.log('finished');
+
+        };
+
+    })(currfile);
+
+    reader.readAsText(currfile);
+}
+
+
+
+
+
 //   TRANSLATION
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//incoming data
-var DATA={};
 
-var interpret_data = function(i){
+//-----------------------------------------
+//   incoming data, settings, url-----------
+var DATA={};
+var settings = function(){
+    return	{
+	async: true,
+	cache: false,
+	crossDomain: true,
+	dataType: 'jsonp',
+	type: 'GET',
+	complete: function(obj, status) {
+	    console.log("complete"); },
+	error: function(obj, status, err) {
+	    console.log("This is an error message: " + err); },
+	//Some default data
+	data: {"from": 'deu', "dest":'eng', "format":'json',
+	       "phrase":'etwas', "pretty": 'true'}
+    };
+};
+//------------------------------------------
+var get_data_Glosbe = function(i)
+{
+    return  {"from": $('#langfrom').val(), "dest":$('#langto').val(),
+	     "format":'json', "pretty": 'true',
+	     "phrase":$('#'+word_id+i).text()};
+    //with examples: "tm" : true
+    //      in DATA: DATA.examples[]
+};
+
+//------------------------------------------
+
+var ajax_Glosbe = function(sets)
+{ $.ajax('http://glosbe.com/gapi/translate', sets); };
+
+
+
+//------------------------------------------
+//   call and interpretation ---------------
+
+var interpret_data_Glosbe = function(i, recur){
     var txt;
     var t = $('#'+transl_id+i).empty();
     var txtarea = $('<textarea readonly id="transltxt" placeholder="Loading ..."'+i+'>').appendTo(t);
+    
+    //GLOSBE SPECIAL: Case-Sensitivity
+    //if no match, try to capitalize/ set to lower case the first letter
+    if(DATA.tuc.length==0 && !recur) //no match
+	{
+	    var w = $('#'+word_id+i);
+	    var tmp_settings = settings();
+	    tmp_settings.success =  function(data, status, obj) 
+	    {
+	   	DATA=data;
+	  	interpret_data_Glosbe(i, true);  //NO LOOP!! if not successful
+	    };
+	    tmp_settings.data = get_data_Glosbe(); //current data
 
+	    if(w.text().charAt(0).toUpperCase() === w.text().charAt(0)) //capital
+	    {
+		//phrase: capitalize first
+		tmp_settings.data.phrase = 
+		    w.text().charAt(0).toLowerCase() + w.text().slice(1);
+		//second ajax call to Glosbe
+		ajax_Glosbe(tmp_settings);    
+		return;
+	    }
+	    else //first letter no capital:
+	    {
+		//phrase to lower case
+		tmp_settings.data.phrase = 
+		    w.text().charAt(0).toUpperCase() + w.text().slice(1);
+		//second ajax call to Glosbe
+		ajax_Glosbe(tmp_settings);
+		return;
+	    }
+	}
+
+    //error display
+    if(DATA.tuc.length==0){t.text('no tanslation found'); return;}
+
+    //interpret DATA
     for(var j=0; j<DATA.tuc.length; j++)
     {
         try
@@ -211,32 +336,20 @@ var interpret_data = function(i){
 
 //------------------------------------------
 
-
-var load_transl_Glosbe = function(i)
+var load_transl_Glosbe = function(i, set)
 {
-    var settings =
-	    {
-		async: true,
-		cache: false,
-		crossDomain: true,
-		dataType: 'jsonp',
-		type: 'GET',
-		complete: function(obj, status) {
-		    console.log("complete"); },
-		error: function(obj, status, err) {
-		    console.log("error: " + err); },
-		success: function(data, status, obj) {
-		    DATA=data ; interpret_data(i);},
-		data: {"from": 'deu', "dest":'eng', "format":'json',
-		       "phrase":'etwas', "pretty": 'true'}
-		
-	    };
-
-    settings.data = {"from": 'deu', "dest":'eng', "format":'json', 
-		     "phrase":$('#'+word_id+i).text(), "pretty": 'true'};
-
-    $.ajax('http://glosbe.com/gapi/translate', settings);
+    var currsettings = set;
+    if(!currsettings) //default
+    {
+	currsettings = settings();
+	currsettings.success = function(data, status, obj) {
+	    DATA=data ; interpret_data_Glosbe(i);};
+    };
     
+    currsettings.data = get_data_Glosbe(i); //get lang, phrase etc.
+    
+    ajax_Glosbe(currsettings); //actual call to Glosbe-URL
+
 };
 
 
@@ -245,9 +358,8 @@ var load_transl_Glosbe = function(i)
 
 var init_transl = function(i)
 {
-
-    if($("#"+transl_id+i).length) {}
-    else {
+    if(!$("#"+transl_id+i).length)
+    {
 	var wdiv= $('#'+word_div_id+i);
 	if(wdiv.length) //word_div already defined?
 	{
@@ -298,7 +410,16 @@ var reset_input = function()
 };
 
 
+//----------------------------------------------------
 
+var add_input = function()
+{
+    $('#output').hide();
+    txtin.empty();
+    TXT.innerHTML = (TXT.innerHTML + "<br>");
+    $('#input').show();
+
+};
 
 
 
@@ -307,10 +428,13 @@ var reset_input = function()
 //   EVENTHANDLERS
 //++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-button_go.click(extract_txt);
+button_go.click(extract_txtin);
 
 button_reset.on('click', reset_input);
 
+button_add.on('click', add_input);
+
+filein.on('change', extract_filein);
 
 
 set_word_div_events = function (w_div){ //defined above
@@ -347,7 +471,7 @@ set_word_div_events = function (w_div){ //defined above
 
 
 //DEBUGGING:
-extract_txt();    
+//extract_txt();    
 
 
 

@@ -20,18 +20,37 @@
 	<p><small>(For more info see <a href="#Howto">below</a>.)</small></p>
    </article>
 
+    <nav id="info">
+      This will tell, what languages you chose and maybe 
+      some more Info about any word you look at.
+    </nav>
+
     <div id="input">
       <textarea id="txtin"
-		placeholder="Enter your text here">Ein bisschen text.</textarea>
+		placeholder="Enter your text here">Salve.</textarea>
       
       <button id="button_go">GO</button>
 
       <input id="filein" type="file"/>
-      <button id="button_file">Load up</button>
+      From:
+      <select id="langfrom">
+	<option value="lat">Latin</option>
+	<option value="deu">German</option>
+	<option value="eng">English</option>
+	<option value="fra">French</option>
+      </select>
+      To:
+      <select id="langto">
+	<option value="eng">English</option>
+	<option value="deu">German</option>
+	<option value="fra">French</option>
+	<option value="lat">Latin</option>
+      </select>
     </div>
 
     <div id="output">
       <div id="txt"></div>
+      <button id="button_add">add text</button>
       <button id="button_reset">RESET</button>
     </div>
 
