@@ -1,3 +1,4 @@
+
 //$( function(){
 
 //###########################################################################
@@ -93,7 +94,7 @@ var create_transl_div = function(i)
     }
     else {err_nomatchingword(); return null;}
 };
-
+ 
 
 //----------------------------------------------------
 
@@ -172,13 +173,14 @@ var extract_txt = function(str)
 	
 	//create+insert word_div
 	TXT.appendChild(create_word_div(i, word).get(0));		    
+	console.log(i);
     };
 
     //last noword-phrase
     if(str.length) //still chars left?
     {
 	TXT.innerHTML=(TXT.innerHTML + str);
-    };
+    };//for(var i=0; i<10000; i++){for (var j=0; j<10000; j++){}}
     
     
 
@@ -259,6 +261,13 @@ var settings = function(){
 	       "phrase":'etwas', "pretty": 'true'}
     };
 };
+
+var iteration_obj_Glosbe = function(j)
+{
+    return [[DATA.tuc[j].phrase], DATA.tuc[j].meanings];
+};
+
+
 //------------------------------------------
 var get_data_Glosbe = function(i)
 {
@@ -271,8 +280,7 @@ var get_data_Glosbe = function(i)
 
 //------------------------------------------
 
-var ajax_Glosbe = function(sets)
-{ $.ajax('http://glosbe.com/gapi/translate', sets); };
+var ajax_Glosbe = function(sets){ $.ajax('http://glosbe.com/gapi/translate', sets); };
 
 
 
@@ -280,9 +288,7 @@ var ajax_Glosbe = function(sets)
 //   call and interpretation ---------------
 
 var interpret_data_Glosbe = function(i, recur){
-    var txt;
-    var t = $('#'+transl_id+i).empty();
-    var txtarea = $('<textarea readonly id="transltxt" placeholder="Loading ..."'+i+'>').appendTo(t);
+    var t = $('#'+transl_id+i).empty(); //transl field
     
     //GLOSBE SPECIAL: Case-Sensitivity
     //if no match, try to capitalize/ set to lower case the first letter
@@ -317,21 +323,71 @@ var interpret_data_Glosbe = function(i, recur){
 	    }
 	}
 
-    //error display
+    //display for no transl
     if(DATA.tuc.length==0){t.text('no tanslation found'); return;}
 
-    //interpret DATA
+
+
+    //GLOSBE INTERPRETATION:
+    var txtarea = $('<textarea readonly id="transltxt" placeholder="Loading ..."'+i+'>').appendTo(t);
+
     for(var j=0; j<DATA.tuc.length; j++)
     {
-        try
-        {
-            txt = DATA.tuc[j].phrase.text;
-            txtarea.text(txtarea.text() + "\n" + j +" "+ DATA.tuc[j].phrase.text);
-            $('<br>').appendTo($('#dest'));
-        }
-        catch(err){};
+	//meanings:
+	if(DATA.tuc[j].meanings) //any mentioned meanings?
+	{
+	    var means = "";
+	    means = means + "\n  - " + DATA.tuc[j].meanings[0].text; //first
+	    for(var k=1; k<DATA.tuc[j].meanings.length-1; k++)
+	    {
+		means = means + "\n  - " + DATA.tuc[j].meanings[k].text;
+	    };
+	};
+	
+	//phrase:
+	var phrase="";
+	if(DATA.tuc[j].phrase) //any phrase mentioned?
+	{
+	    phrase=DATA.tuc[j].phrase.text;
+	}
+
+	//insert
+	if(phrase){txtarea.text(txtarea.text() + "\n" + j +" "+ phrase);}
+	if(means){txtarea.text(txtarea.text() +  means);}
+ 	$('<br>').appendTo($('#dest'));
     };
+
+    // //interpret DATA
+    // for(var j=0; j<DATA.tuc.length; j++)
+    // {
+    // 	//go through all arrays with text content (meaning, phrase ...)
+    // 	for(var k=0; k<iteration_obj_Glosbe(j).length; k++)
+    // 	    {
+    // 		for(var r=0; r<iteration_obj_Glosbe(j)[k].length; r++)
+    // 		txt = iteration_obj_Glosbe(j)[k][r].text;
+    // 		if(txt)
+    // 		{
+    // 		    txtarea.text(txtarea.text() + "\n" + j+"."+k+"."+r +" "+ txt);
+    // 		    $('<br>').appendTo($('#dest'));
+    // 		}
+    // 		else {console.log("no iter. obj. "+k);};
+    // 	    };
+    // };
+
+    
+    // try 
+    // {
+    // 	txt = DATA.tuc[j].phrase.text;
+    // 	txtarea.text(txtarea.text() + "\n" + j +" "+ DATA.tuc[j].phrase.text);
+    // 	$('<br>').appendTo($('#dest'));
+    // }
+    // catch(err){};
 };
+
+
+
+
+
 
 
 //------------------------------------------
@@ -414,7 +470,7 @@ var reset_input = function()
 
 var add_input = function()
 {
-    $('#output').hide();
+    $('#output').hide(); txt.show();
     txtin.empty();
     TXT.innerHTML = (TXT.innerHTML + "<br>");
     $('#input').show();
@@ -428,7 +484,17 @@ var add_input = function()
 //   EVENTHANDLERS
 //++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-button_go.click(extract_txtin);
+button_go.click(function(){
+    // if(typeof(Worker) !== "undefined") {
+    // 	var w= new Worker('extract_txt.js');
+    // 	w.onmessage =  function(){this.terminate();};
+    // } 
+    // else {
+    // window.alert("Your Browser does not support WebWorker"+
+    // 		 "(Multithreading) - Readout may take a while ...");
+    //};
+  extract_txtin();
+});
 
 button_reset.on('click', reset_input);
 
@@ -452,7 +518,7 @@ set_word_div_events = function (w_div){ //defined above
     //MOUSEMOVE
     w_div.on('mousemove', function(){
 	//check transl pos
-	show_transl(id);
+ 	show_transl(id);
     });
         
     
