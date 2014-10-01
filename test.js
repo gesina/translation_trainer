@@ -2,7 +2,7 @@
 //$( function(){
 
 //###########################################################################
-//ATTRIBUTES
+//VALUES
 //###########################################################################
 var button_go=$('#button_go');
 var BUTTON_GO=button_go.get(0);
@@ -16,13 +16,11 @@ var txtin=$('#txtin');
 var TXTIN=txtin.get(0);
 var filein=$('#filein');
 var FILEIN=filein.get(0);
+//-------------------------------------
 
 var noword_char= "\\\\,\\.\\?\\$\\^\\{\\}\\[\\]\\(\\)\\+\\*\\|"
 	+";:!<> \"#~§%&@";
 
-//###########################################################################
-//VALUES
-//###########################################################################
 var word_div_class = "word_div";
 var word_div_id = "word_div";
 var word_class = "word";
@@ -30,6 +28,11 @@ var word_id = "word";
 var transl_class = "transl";
 var transl_id = "transl";
 var transl_height = "-4.5em";
+
+var MAX_PARLENGTH=100;
+var ellipse = $('<span>').text(" ...");
+
+//--------------------------------------
 
 var transl_stylebelow = function(id){
     var t = $('#'+transl_id+id);
@@ -48,6 +51,14 @@ var transl_styleover = function(id){
     else { err_nomatchingtransl(); return false;}
 };
 
+
+//###########################################################################
+//GLOBAL VARIABLES
+//###########################################################################
+var sec_counter = 0; //position (and key) of first not visible text section
+var sec_total = 0;   //text elements stored in total
+
+
 //###########################################################################
 //PREDEFINITIONS
 //###########################################################################
@@ -59,11 +70,58 @@ var set_transl_events;
 //FUNCTIONS
 //###########################################################################
 
+
+
 //   ERRORS
 //++++++++++++++++++++++++++++++++++++++++++++++++++
 var err_noinput= function(){console.log('no input');};
 var err_nomatchingword = function(){console.log('no matching word');};
 var err_nomatchingtransl= function(){console.log('no matching translation');};
+var err_sessStorExceeded = function()
+    {alert('You managed the sheer impossible: Your input exceeded the local storage!');};
+
+
+
+//   GET
+//++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+var get_word_id = function(v){
+    return parseInt(v.get(0).id.slice(word_id.length));};
+
+var get_word_div_id = function(v){
+    return parseInt(v.get(0).id.slice(word_div_id.length));};
+
+
+
+//   ADDITIONAL OPERATIONS
+//++++++++++++++++++++++++++++++++++++++++++++++++++
+
+var split_str = function(str, pos)
+{
+    var arr = [];
+
+    while(str)
+    {
+        if(str.length>pos+20) //splittable?                                                                                                                             
+        {
+            var split_pos= str.indexOf(' ', pos);
+            //no space or some newline earlier                                                                                                                          
+            if((!split_pos) || (split_pos && str.indexOf('\n', pos)<split_pos))
+            {split_pos=str.indexOf('\n', pos);}
+            console.log("split_pos: "+split_pos);
+
+            if(split_pos) //set?                                                                                                                                        
+            {
+                arr.push(str.substring(0, split_pos));
+                str = str.slice(split_pos);
+            };
+        }
+        else{arr.push(str); str ="";}
+    }
+
+    return arr;
+};
+
 
 
 //   CREATE
@@ -110,31 +168,16 @@ var create_word_div = function(i, text)
 };
 
 
+//----------------------------------------------------
 
-//   GET
-//++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-var get_word_id = function(v){
-    return parseInt(v.get(0).id.slice(word_id.length));};
-
-var get_word_div_id = function(v){
-    return parseInt(v.get(0).id.slice(word_div_id.length));};
-
-
-
-
-//   EXTRACTION
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++
-var extract_txt = function(str)
+var create_output = function(str)
 {
-    console.log("extracting text ..."); //start
-    $('#output').show();
+    console.log("extracting text ..."); //DEBUGGING
+
     //variables
-    //var str=txtin.val();
     if(str.length===0) { err_noinput(); return false;}
     str = str.replace(/\n/g, "<br>"); //html-newlines
 
-    var pos_whitespace = "";
     var word = "";
     var noword = "";
     var word_arr = [];
@@ -155,6 +198,7 @@ var extract_txt = function(str)
     {
 	//get next word
 	word=word_arr[i];
+
 	//get noword_char before
 	noword_pattern= new RegExp("((<br>)|["+noword_char+"]){1,}(?="+word+")");
 	noword = str.match(noword_pattern); //array
@@ -199,12 +243,62 @@ var extract_txt = function(str)
 };
 
 
+//--------------------------------------------------
+
+
+var create_next_sec = function()
+{
+    if(sessionStorage.length >= sec_counter) //section left?
+    {
+	var str = sessionStorage.getItem(sessionStorage.key(sec_counter));
+	//txt.text(txt.text().substring(0, txt.text().length-ellipse.length)); //old text without "..."  
+        ellipse.detach();
+	create_output(str); //show next section                                                                                     
+	sec_counter++;      
+
+	if(sessionStorage.length !== sec_counter) //reached last?
+	{
+	    ellipse.appendTo(txt);        //new "..."
+	};
+    };
+    
+    
+};
+
+
+
+
+//   EXTRACTION
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+var store_par = function(str, max_seclen)
+{
+    var array = split_str(str, max_seclen);
+    for(var i=0; i<array.length; i++)
+    {
+	try{
+        sessionStorage.setItem(sec_total, array[i]);
+	sec_total++;
+        }
+        catch(e){if (e === QUOTA_EXCEEDED_ERR) err_sessStorExceeded(); };
+    };
+};
+
+//---------------------------------------------------
+var extract_input = function(str)
+{
+    //split str & store in sessionStore
+    store_par(str, MAX_PARLENGTH);
+    //create first section
+    create_next_sec();
+};
 
 //----------------------------------------------------
 
 
 
-var extract_txtin = function() { extract_txt(txtin.val()); };
+var extract_txtin = function() { extract_input(txtin.val()); };
 
 
 var extract_filein = function(evt)
@@ -233,7 +327,7 @@ var extract_filein = function(evt)
     })(currfile);
 
     reader.readAsText(currfile);
-}
+};
 
 
 
@@ -357,31 +451,6 @@ var interpret_data_Glosbe = function(i, recur){
  	$('<br>').appendTo($('#dest'));
     };
 
-    // //interpret DATA
-    // for(var j=0; j<DATA.tuc.length; j++)
-    // {
-    // 	//go through all arrays with text content (meaning, phrase ...)
-    // 	for(var k=0; k<iteration_obj_Glosbe(j).length; k++)
-    // 	    {
-    // 		for(var r=0; r<iteration_obj_Glosbe(j)[k].length; r++)
-    // 		txt = iteration_obj_Glosbe(j)[k][r].text;
-    // 		if(txt)
-    // 		{
-    // 		    txtarea.text(txtarea.text() + "\n" + j+"."+k+"."+r +" "+ txt);
-    // 		    $('<br>').appendTo($('#dest'));
-    // 		}
-    // 		else {console.log("no iter. obj. "+k);};
-    // 	    };
-    // };
-
-    
-    // try 
-    // {
-    // 	txt = DATA.tuc[j].phrase.text;
-    // 	txtarea.text(txtarea.text() + "\n" + j +" "+ DATA.tuc[j].phrase.text);
-    // 	$('<br>').appendTo($('#dest'));
-    // }
-    // catch(err){};
 };
 
 
@@ -459,10 +528,16 @@ var show_transl = function(id)
 
 var reset_input = function()
 {
+    //surface
     $('#output').hide();
     txtin.empty();
     txt.empty();
     $('#input').show();
+    
+    //storage
+    sessionStorage.clear();
+    sec_counter=0;
+    sec_total=0;
 };
 
 
@@ -472,7 +547,9 @@ var add_input = function()
 {
     $('#output').hide(); txt.show();
     txtin.empty();
-    TXT.innerHTML = (TXT.innerHTML + "<br>");
+
+    ellipse.detach();  //remove "..."
+    TXT.innerHTML = (TXT.innerHTML + "<br>"); //newline
     $('#input').show();
 
 };
