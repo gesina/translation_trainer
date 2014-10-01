@@ -16,6 +16,9 @@ var txtin=$('#txtin');
 var TXTIN=txtin.get(0);
 var filein=$('#filein');
 var FILEIN=filein.get(0);
+var more = $('#more');
+var MORE = more.get(0);
+
 //-------------------------------------
 
 var noword_char= "\\\\,\\.\\?\\$\\^\\{\\}\\[\\]\\(\\)\\+\\*\\|"
@@ -194,6 +197,11 @@ var create_output = function(str)
     
 
     //ACTUAL TEXT CREATION
+    var start = 0;
+    var last_word = $('#txt > div:nth-last-of-type(1)');   console.log(last_word);
+    if(last_word.length){ start = get_word_div_id(last_word)+1;
+			console.log('start: '+start);} //id-number of last word (for ids)
+ 
     for (var i=0; i<word_arr.length; i++)
     {
 	//get next word
@@ -216,7 +224,7 @@ var create_output = function(str)
 	};
 	
 	//create+insert word_div
-	TXT.appendChild(create_word_div(i, word).get(0));		    
+	TXT.appendChild(create_word_div(i+start, word).get(0));		    
 	console.log(i);
     };
 
@@ -298,7 +306,11 @@ var extract_input = function(str)
 
 
 
-var extract_txtin = function() { extract_input(txtin.val()); };
+var extract_txtin = function() 
+{
+    if(txtin.val()){extract_input(txtin.val());}
+    else{err_noinput();};
+};
 
 
 var extract_filein = function(evt)
@@ -318,7 +330,7 @@ var extract_filein = function(evt)
                     +file.size+", "+file.lastModifiedDate.toLocaleDateString());
 
 	    console.log (e.target.result);
-            extract_txt(e.target.result);
+	    if(e.target.result){create_output(e.target.result);}
 
 	    console.log('finished');
 
@@ -530,7 +542,7 @@ var reset_input = function()
 {
     //surface
     $('#output').hide();
-    txtin.empty();
+    txtin.empty(); txtin.html('');
     txt.empty();
     $('#input').show();
     
@@ -546,7 +558,7 @@ var reset_input = function()
 var add_input = function()
 {
     $('#output').hide(); txt.show();
-    txtin.empty();
+    txtin.empty(); txtin.html('');
 
     ellipse.detach();  //remove "..."
     TXT.innerHTML = (TXT.innerHTML + "<br>"); //newline
@@ -578,6 +590,9 @@ button_reset.on('click', reset_input);
 button_add.on('click', add_input);
 
 filein.on('change', extract_filein);
+
+more.on('click', create_next_sec);
+
 
 
 set_word_div_events = function (w_div){ //defined above
