@@ -10,6 +10,9 @@ var button_add=$('#button_add');
 var BUTTON_ADD=button_add.get(0);
 var button_reset=$('#button_reset');
 var BUTTON_RESET=$('#button_reset').get(0);
+var button_load=$('#button_load');
+var BUTTON_LOAD=button_load.get(0);
+
 var txt=$('#txt');
 var TXT=txt.get(0);
 var txtin=$('#txtin');
@@ -78,6 +81,7 @@ var set_transl_events;
 //   ERRORS
 //++++++++++++++++++++++++++++++++++++++++++++++++++
 var err_noinput= function(){console.log('no input');};
+var err_nocontent = function(){console.log('no content in file');
 var err_nomatchingword = function(){console.log('no matching word');};
 var err_nomatchingtransl= function(){console.log('no matching translation');};
 var err_sessStorExceeded = function()
@@ -256,17 +260,17 @@ var create_output = function(str)
 
 var create_next_sec = function()
 {
-    if(sessionStorage.length >= sec_counter) //section left?
+    if(sessionStorage.length > sec_counter) //section left?
     {
 	var str = sessionStorage.getItem(sessionStorage.key(sec_counter));
-	//txt.text(txt.text().substring(0, txt.text().length-ellipse.length)); //old text without "..."  
-        ellipse.detach();
+
+        ellipse.detach(); //remove "..."
 	create_output(str); //show next section                                                                                     
 	sec_counter++;      
 
-	if(sessionStorage.length !== sec_counter) //reached last?
+	if(sessionStorage.length !== sec_counter) //sections left?
 	{
-	    ellipse.appendTo(txt);        //new "..."
+	    ellipse.appendTo(txt);   //new "..."
 	};
     };
     
@@ -305,42 +309,64 @@ var extract_input = function(str)
 //----------------------------------------------------
 
 
-
-var extract_txtin = function() 
+var read_files = function(evt, file_pos, read)
 {
-    if(txtin.val()){extract_input(txtin.val());}
-    else{err_noinput();};
-};
+    var pos = file_pos || 0; //console.log("file_pos: "+pos);
 
-
-var extract_filein = function(evt)
-{
-
-    console.log("About to read the file ...");
+    //console.log("About to read file ...");
                                            
-    var currfile = evt.target.files[0];
-    var reader = new FileReader();
-
+    var currfile = FILEIN.files[pos];
+    var reader = read || new FileReader();
+    var str = "";
     //when loaded
     reader.onload = (function(file) {
         return function(e) {
-            //debug info
+	    //DEBUGGING
 	    console.log(
                 "FILE: "+file.name+", "+file.type+", "
-                    +file.size+", "+file.lastModifiedDate.toLocaleDateString());
-
-	    console.log (e.target.result);
-	    if(e.target.result){create_output(e.target.result);}
-
-	    console.log('finished');
-
+		    +file.size+", "+file.lastModifiedDate.toLocaleDateString());
+	    
+	    //PROCESS CONTENT: get, store, process and show
+	    if(e.target.result)
+	    {
+		txt.append("<br> Sourcefile: "+file.name);
+		str = "\n" + e.target.result;
+		extract_input(str);
+	    }
+	    else {err_nocontent();};
+	    
+	    //RECURSION: next files
+	    if(FILEIN.files.length>pos+1) {read_files(evt, pos+1, reader);} 
         };
-
+	
     })(currfile);
-
+    
     reader.readAsText(currfile);
 };
+			       
 
+var extract_filein = function(evt)
+{
+    if(FILEIN.files.length)
+    {
+	read_files(evt); //read files, store, process and show content
+	filein.val(''); //remove from input
+    }
+    else{ err_noinput();};
+};
+
+
+
+
+var extract_txtin = function() 
+{
+    if(txtin.val())
+    {
+	extract_input(txtin.val()); //store, process and show input text
+	txtin.val(''); //remove from input
+    }
+    else{err_noinput();};
+};
 
 
 
@@ -542,7 +568,7 @@ var reset_input = function()
 {
     //surface
     $('#output').hide();
-    txtin.empty(); txtin.html('');
+    $('.input').val('');
     txt.empty();
     $('#input').show();
     
@@ -558,11 +584,11 @@ var reset_input = function()
 var add_input = function()
 {
     $('#output').hide(); txt.show();
-    txtin.empty(); txtin.html('');
 
     ellipse.detach();  //remove "..."
     TXT.innerHTML = (TXT.innerHTML + "<br>"); //newline
-    $('#input').show();
+
+    $('#input').show(); //new entries
 
 };
 
@@ -583,13 +609,16 @@ button_go.click(function(){
     // 		 "(Multithreading) - Readout may take a while ...");
     //};
   extract_txtin();
+  //extract_filein();
 });
 
 button_reset.on('click', reset_input);
 
 button_add.on('click', add_input);
 
-filein.on('change', extract_filein);
+button_load.on('click', extract_filein);
+//filein.on('change', extract_filein);
+//button_load.on('click', extract_filein);
 
 more.on('click', create_next_sec);
 
