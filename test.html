@@ -26,12 +26,13 @@
     </nav>
 
     <div id="input">
-      <textarea id="txtin"
+      <textarea id="txtin" class="input"
 		placeholder="Enter your text here">Salve.</textarea>
       
       <button id="button_go">GO</button>
 
-      <input id="filein" type="file"/>
+      <input id="filein" class="input" type="file" multiple/>
+      <button id="button_load">Load</button>
       From:
       <select id="langfrom">
 	<option value="lat">Latin</option>
@@ -66,6 +67,10 @@
       <p><small>Diese Seite gehört mir! lg Gesina Schwalbe</small></p>
     </footer>
     
+    <div id="vocab" readonly>
+      Your vocab:<br>
+    </div>
+
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.js"></script>
     <script src="test.js"></script>
   </BODY>

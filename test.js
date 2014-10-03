@@ -21,7 +21,8 @@ var filein=$('#filein');
 var FILEIN=filein.get(0);
 var more = $('#more');
 var MORE = more.get(0);
-
+var vocab=$('#vocab');
+var VOCAB=vocab.get(0);
 //-------------------------------------
 
 var noword_char= "\\\\,\\.\\?\\$\\^\\{\\}\\[\\]\\(\\)\\+\\*\\|"
@@ -34,6 +35,11 @@ var word_id = "word";
 var transl_class = "transl";
 var transl_id = "transl";
 var transl_height = "-4.5em";
+var but_voc_id = "but_voc";
+var but_voc_class = "but_voc";
+var vocab_id = "voc";
+var vocab_class = "voc_"; //followed by language
+
 
 var MAX_PARLENGTH=100;
 var ellipse = $('<span>').text(" ...");
@@ -77,11 +83,10 @@ var set_transl_events;
 //###########################################################################
 
 
-
 //   ERRORS
 //++++++++++++++++++++++++++++++++++++++++++++++++++
 var err_noinput= function(){console.log('no input');};
-var err_nocontent = function(){console.log('no content in file');
+var err_nocontent = function(){console.log('no content in file')};
 var err_nomatchingword = function(){console.log('no matching word');};
 var err_nomatchingtransl= function(){console.log('no matching translation');};
 var err_sessStorExceeded = function()
@@ -152,9 +157,20 @@ var create_transl_div = function(i)
     {
 	var transl = $('<div>')
 		.attr({'id' : transl_id + i, 'class' : transl_class})
-		.text("blabla "+i); //for debugging
-	
-	transl.hide();
+		.text("blabla "+i) //for debugging
+		.hide();
+	//add translation
+	$('<input type="text">')
+	    .attr({'id':voc_in_id+i, 'class':voc_in_class, 
+		   'placeholder':"alternate translation"})
+	    .appendTo(transl);
+	$('<button>')
+	    .attr({'id':but_voc_id+i, 'class': but_voc_class, 'text':"add to vocab"})
+	    .on('click', function(){
+		var str = $('#'+voc_in_id+i).val();
+		if(!str) {str = $('#'+transl_id+i+'>textarea').val();}
+		add_vocab($('#'+word_id+i).html(), str);
+	    });
 	return transl;
     }
     else {err_nomatchingword(); return null;}
@@ -343,7 +359,7 @@ var read_files = function(evt, file_pos, read)
     
     reader.readAsText(currfile);
 };
-			       
+
 
 var extract_filein = function(evt)
 {
@@ -374,7 +390,6 @@ var extract_txtin = function()
 //   TRANSLATION
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-//-----------------------------------------
 //   incoming data, settings, url-----------
 var DATA={};
 var settings = function(){
@@ -388,7 +403,7 @@ var settings = function(){
 	    console.log("complete"); },
 	error: function(obj, status, err) {
 	    console.log("This is an error message: " + err); },
-	//Some default data
+	//DEBUGGING: Some default data
 	data: {"from": 'deu', "dest":'eng', "format":'json',
 	       "phrase":'etwas', "pretty": 'true'}
     };
@@ -461,7 +476,7 @@ var interpret_data_Glosbe = function(i, recur){
 
 
     //GLOSBE INTERPRETATION:
-    var txtarea = $('<textarea readonly id="transltxt" placeholder="Loading ..."'+i+'>').appendTo(t);
+    var txtarea = $('<textarea readonly id="transltxt" placeholder="Loading ..."'+i+'>').prependTo(t);
 
     for(var j=0; j<DATA.tuc.length; j++)
     {
@@ -558,6 +573,15 @@ var show_transl = function(id)
     else {err_nomatchingtransl(); return false;}
     
     return true;
+};
+
+
+
+//   VOCABULARY
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+var add_vocab = function(expr, transl)
+{
+    
 };
 
 
@@ -660,6 +684,15 @@ set_word_div_events = function (w_div){ //defined above
 //DEBUGGING:
 //extract_txt();    
 
+//################################################
+//   DATABASE
+//################################################
+
+var request = indexedDB.open("vocabbase");
+request.onsuccess = function(evt)
+{
+    var vb=evt.target.result;
+};
 
 
 
