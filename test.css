@@ -1,7 +1,64 @@
+*
+{
+    font-family: Ubuntu, "Comic Sans MS", cursive, sans-serif;
+    color: #cccccc;
+    border-radius: 5px;
+    border-color: #aaaaaa;
+}
+
 body
 {
-    font-family:  "Comic Sans MS", cursive, sans-serif;
+    background-image: -webkit-linear-gradient(left top, #151515, white);
+					      
 }
+
+select,
+button,
+input[type=file]
+     {
+	 color: #333333;
+	 background-color: #BDFF7D;
+	 background-image: -webkit-linear-gradient(top, #8AE62E, #E0FFC2);
+     }
+
+select:hover,
+button:hover,
+input[type=file]:hover
+     {
+	 background-color: #99FF33;
+	 background-image: -webkit-linear-gradient(top, #6BB224, #E0FFC2);
+	 border-color: white;
+     }
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6
+    {
+	color: #8AE62E;
+    }
+
+header
+{
+    position: relative;
+}
+nav
+{
+    position: absolute;
+    width: 12em;
+}
+
+
+.input,
+#button_go,
+#button_load,
+#more
+    {
+	display: block;
+	margin-left: 13em;
+    }
 
 .transl
 {
@@ -12,22 +69,12 @@ body
     overflow: scroll;
 }
 
+.word,
 .word_div
 {
     position: relative;
     display: inline-block;
-    border-style: double; border-color:yellow;
-}
-
-.word, .word_div
-{
-    margin: 0;
-}
-
-.word
-{
-    position: relative;
-    display: inline-block;
+    margin: 0em;
 }
 
 .word_div:hover
@@ -38,9 +85,32 @@ body
 
 #txtin
 {
-    width: 80%; height: 5em;
+    width: 60%; height: 1.5em;
+    margin-top: 1em;
+    padding: 0.5em;
+    background-color: #151515;
+    background-image: -webkit-linear-gradient(right top, #151515, #333333);
 }
 
+#txtin:focus
+	   {
+	       height: 10em;
+	   }
+
+#output
+{
+    font-size: 110%;
+    margin: 2em;
+    padding: 0.5em;
+}
+
+
+
+#more,
+a
+    {
+	color: #6BB224;
+    }
 .transl>div
 {
     height: 7em;
@@ -52,3 +122,10 @@ body
 {
     display: inline-block;
 }
+
+/*Input font-type*/
+textarea,
+input[type=text]
+     {
+	 font-family: Ubuntu;
+     }
