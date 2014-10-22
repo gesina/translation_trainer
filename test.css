@@ -1,6 +1,6 @@
 body
 {
-    font-family:  Times;
+    font-family:  "Comic Sans MS", cursive, sans-serif;
 }
 
 .transl
@@ -8,7 +8,8 @@ body
     position: absolute;
     background-color: yellow; z-index: 10;
     border-color: blue; border-style: solid;
-    width: 4cm; height:4em;
+    width: auto; height:5cm;
+    overflow: scroll;
 }
 
 .word_div
@@ -35,12 +36,19 @@ body
     background-color: green;
 }
 
-textarea
+#txtin
 {
-    width:80%; height:10em;
+    width: 80%; height: 5em;
 }
 
-.transl>textarea
+.transl>div
 {
     height: 7em;
+    overflow: inherit;
+    font-size: 110%;
+}
+
+.voc_div > span
+{
+    display: inline-block;
 }

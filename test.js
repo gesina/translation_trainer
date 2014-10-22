@@ -12,6 +12,7 @@ var button_reset=$('#button_reset');
 var BUTTON_RESET=$('#button_reset').get(0);
 var button_load=$('#button_load');
 var BUTTON_LOAD=button_load.get(0);
+var button_download=$('#button_download');
 
 var txt=$('#txt');
 var TXT=txt.get(0);
@@ -39,7 +40,8 @@ var but_voc_id = "but_voc";
 var but_voc_class = "but_voc";
 var vocab_id = "voc";
 var vocab_class = "voc_"; //followed by language
-
+var voc_in_id = "voc_in";
+var voc_in_class="voc_in";
 
 var MAX_PARLENGTH=100;
 var ellipse = $('<span>').text(" ...");
@@ -120,7 +122,7 @@ var split_str = function(str, pos)
             //no space or some newline earlier                                                                                                                          
             if((!split_pos) || (split_pos && str.indexOf('\n', pos)<split_pos))
             {split_pos=str.indexOf('\n', pos);}
-            console.log("split_pos: "+split_pos);
+            //DEBUGGING: console.log("split_pos: "+split_pos);
 
             if(split_pos) //set?                                                                                                                                        
             {
@@ -157,20 +159,36 @@ var create_transl_div = function(i)
     {
 	var transl = $('<div>')
 		.attr({'id' : transl_id + i, 'class' : transl_class})
-		.text("blabla "+i) //for debugging
-		.hide();
-	//add translation
+		//.text("Glosbe transl "+i) //for DEBUGGING
+		//.append("<span>"+$('#langfrom').val()+" > "+$('#langto').val()+"</span>")
+	        .hide();
+	
+	//span for language information
+	$('<span>').attr({'id':"transl_lang"+i,'class':"transl_lang"})
+	           .html($('#langfrom').val() +" - "+$('#langto').val())
+	           .prependTo(transl);
+	
+	//div for actual text-spans
+	$('<div>').appendTo(transl);
+	
+	// text field to add personal translation
 	$('<input type="text">')
 	    .attr({'id':voc_in_id+i, 'class':voc_in_class, 
 		   'placeholder':"alternate translation"})
 	    .appendTo(transl);
+	
+	// input button for personal translation
 	$('<button>')
-	    .attr({'id':but_voc_id+i, 'class': but_voc_class, 'text':"add to vocab"})
+	    .attr({'id':but_voc_id+i, 'class': but_voc_class})
+	    .html("add to vocab")
 	    .on('click', function(){
-		var str = $('#'+voc_in_id+i).val();
-		if(!str) {str = $('#'+transl_id+i+'>textarea').val();}
-		add_vocab($('#'+word_id+i).html(), str);
-	    });
+		var nwvocab = $('#'+voc_in_id+i).val(); //get personal transl 
+		if(nwvocab) {  //any input?
+		    add_vocab($('#'+word_id+i).html(), nwvocab); //vocab list
+		    add_transl_entry("* "+nwvocab, i);           //transl field
+		}
+	    })
+	    .appendTo(transl);
 	return transl;
     }
     else {err_nomatchingword(); return null;}
@@ -218,7 +236,7 @@ var create_output = function(str)
 
     //ACTUAL TEXT CREATION
     var start = 0;
-    var last_word = $('#txt > div:nth-last-of-type(1)');   console.log(last_word);
+    var last_word = $('#txt > div:nth-last-of-type(1)');   //DEBUGGING console.log(last_word);
     if(last_word.length){ start = get_word_div_id(last_word)+1;
 			console.log('start: '+start);} //id-number of last word (for ids)
  
@@ -386,6 +404,22 @@ var extract_txtin = function()
 
 
 
+//------------------------------------------
+
+var add_transl_entry = function(str, id)
+{
+    var div=$('#'+transl_id+id+'>div:first-of-type');
+    
+    $('<span>')
+	.html("<br>"+str)
+	.on('click', function(){
+	    add_vocab($('#'+word_id+id).html(), str);
+	    })
+	.appendTo(div);
+    
+};
+
+
 
 //   TRANSLATION
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -409,11 +443,6 @@ var settings = function(){
     };
 };
 
-var iteration_obj_Glosbe = function(j)
-{
-    return [[DATA.tuc[j].phrase], DATA.tuc[j].meanings];
-};
-
 
 //------------------------------------------
 var get_data_Glosbe = function(i)
@@ -435,7 +464,7 @@ var ajax_Glosbe = function(sets){ $.ajax('http://glosbe.com/gapi/translate', set
 //   call and interpretation ---------------
 
 var interpret_data_Glosbe = function(i, recur){
-    var t = $('#'+transl_id+i).empty(); //transl field
+    var t = $('#'+transl_id+i); //transl field
     
     //GLOSBE SPECIAL: Case-Sensitivity
     //if no match, try to capitalize/ set to lower case the first letter
@@ -470,24 +499,34 @@ var interpret_data_Glosbe = function(i, recur){
 	    }
 	}
 
-    //display for no transl
-    if(DATA.tuc.length==0){t.text('no tanslation found'); return;}
+    //console.log(DATA);
 
+    //display for no transl
+    if(DATA.tuc.length==0)
+    {
+	//t.text('no tanslation found');
+	$('<span>')
+	    .html("no translation found, click to try again")
+	    .on('click', function(){
+	        load_transl_Glosbe(i);
+	        $(this).remove();
+	    })
+	    .prependTo(t);
+	return;
+    }
 
 
     //GLOSBE INTERPRETATION:
-    var txtarea = $('<textarea readonly id="transltxt" placeholder="Loading ..."'+i+'>').prependTo(t);
-
     for(var j=0; j<DATA.tuc.length; j++)
     {
+	var means = "";
 	//meanings:
 	if(DATA.tuc[j].meanings) //any mentioned meanings?
 	{
-	    var means = "";
-	    means = means + "\n  - " + DATA.tuc[j].meanings[0].text; //first
+	    means = means + "<br>  - " + DATA.tuc[j].meanings[0].text; //first
 	    for(var k=1; k<DATA.tuc[j].meanings.length-1; k++)
 	    {
-		means = means + "\n  - " + DATA.tuc[j].meanings[k].text;
+		means = means + "<br>  - " + DATA.tuc[j].meanings[k].text;
 	    };
 	};
 	
@@ -498,10 +537,11 @@ var interpret_data_Glosbe = function(i, recur){
 	    phrase=DATA.tuc[j].phrase.text;
 	}
 
+	//DEBUGGING
+	//console.log("still there?"); console.log($('#word00'));
+
 	//insert
-	if(phrase){txtarea.text(txtarea.text() + "\n" + j +" "+ phrase);}
-	if(means){txtarea.text(txtarea.text() +  means);}
- 	$('<br>').appendTo($('#dest'));
+	add_transl_entry(j+" "+phrase+means, i);
     };
 
 };
@@ -536,8 +576,21 @@ var load_transl_Glosbe = function(i, set)
 
 var init_transl = function(i)
 {
-    if(!$("#"+transl_id+i).length)
-    {
+    if($("#"+transl_id+i).length){
+    console.log($('#transl_lang'+i).html()+"\n"
+		+$('#langfrom').val()+" ? "
+                +$('#transl_lang'+i).html().substring(0,3) +"\n"
+		+$('#langto').val()+" ? "
+		+$('#transl_lang'+i).html().substring(6,9));
+    console.log($('#langfrom').val()!=$('#transl_lang'+i).html().substring(0,3) +"\n");
+    console.log($('#langto').val()!=$('#transl_lang'+i).html().substring(6,9))};
+
+
+
+    if(!$("#"+transl_id+i).length) //does it already exist? 
+       //and if so, are the languages ok?
+        {
+	console.log("changing transl"+i);
 	var wdiv= $('#'+word_div_id+i);
 	if(wdiv.length) //word_div already defined?
 	{
@@ -546,7 +599,13 @@ var init_transl = function(i)
 	    return true;
 	}
 	else {err_nomatchingword(); return false;}
-    };
+    }
+       else if($('#langfrom').val()!=$('#transl_lang'+i).html().substring(0,3) ||
+               $('#langto').val()!=$('#transl_lang'+i).html().substring(6,9))
+       {
+	   $('#'+transl_id+i+'>div:first-of-type').empty();
+	   load_transl_Glosbe(i);
+       };
 
     return true;
 };
@@ -562,7 +621,7 @@ var show_transl = function(id)
     if(t.get(0)) //transl exists?
     {	
 	var w = $('#'+word_id+id); //word with id
-	if(event.clientY < w.offset().top + 0.5*w.height()){//cursor in upper half
+	if(event.clientY + $('body').scrollTop() < w.offset().top + 0.5*w.height()){//cursor in upper half
 	    t.css(transl_styleover(id)).show();
 	}	    
 	else {//cursor in lower half
@@ -577,16 +636,56 @@ var show_transl = function(id)
 
 
 
+
+
 //   VOCABULARY
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++
 var add_vocab = function(expr, transl)
 {
-    
+    var div= $('<div class="voc_div">').appendTo(vocab);
+    $('<span>').html(expr+"    ").appendTo(div);
+    $('<span>').html(transl).appendTo(div);
+    $('<button>').html("X")
+	.on('click', function(){
+	    //DEBUGGING: console.log(this.parentNode);
+	    $(this.parentNode).remove();
+	})
+	.appendTo(div);
 };
 
 
 
 //-----------------------------------------------------
+
+
+var download_txtfile = function(text, filename)
+{
+    var tmp_link = $('<a>')
+        //create textfile and set as link
+	.attr({'href': 'data:text/plain;charset=utf-8,' + encodeURIComponent(text),
+	       'download': filename})
+        //execute Download
+	.click();
+    
+};
+
+var download_vocab = function()
+{
+    //create vocab text for download file
+    var txt;
+    var tmp_str;
+    $('.voc_div').each(function() {
+	var tmp_str = this.children[0].innerHTML;
+	tmp_str= mod_newlines(tmp_str);
+	txt += "\n" + tmp_str;
+	});
+	
+};
+
+
+
+//   ADD + RESET
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 var reset_input = function()
 {
@@ -620,33 +719,85 @@ var add_input = function()
 
 
 
-//   EVENTHANDLERS
+//  EVENTHANDLERS
 //++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-button_go.click(function(){
-    // if(typeof(Worker) !== "undefined") {
-    // 	var w= new Worker('extract_txt.js');
-    // 	w.onmessage =  function(){this.terminate();};
-    // } 
-    // else {
-    // window.alert("Your Browser does not support WebWorker"+
-    // 		 "(Multithreading) - Readout may take a while ...");
-    //};
-  extract_txtin();
-  //extract_filein();
-});
+button_go.click(function(){ extract_txtin(); });
 
 button_reset.on('click', reset_input);
 
 button_add.on('click', add_input);
 
 button_load.on('click', extract_filein);
-//filein.on('change', extract_filein);
-//button_load.on('click', extract_filein);
 
 more.on('click', create_next_sec);
 
+$('#button_transl00').on('click', function(){
 
+    //delete error message if existing
+    if($('#transl00').html().match(/no\ translation\ found/g)) 
+    {
+	$('#transl00 >span:first-of-type').remove();
+    };
+
+    //save asked vocab
+    var voc_tmp = $('#alt_voc_in').val();
+    $('#word00').html(voc_tmp);
+    //DEBUGGING: console.log('clicked' + ' value: ' +$('#alt_voc_in').val());    
+    
+    $('#transl00>div:first-of-type').empty();
+    //load transl and save in transl00
+    load_transl_Glosbe('00');
+
+    //translation not successful?
+    if($('#word00').html()===voc_tmp)
+	{
+	    $('#word00').empty();
+	    //new ajax query with switched languages
+	    var ajax_set=settings();
+	    console.log('ajax_set : ');console.log(ajax_set);
+	    var new_result = "";
+	    //switch languages
+	    DATA="blubb";
+	    ajax_set.data.dest=$('#langfrom').val();
+	    ajax_set.data.from=$('#langto').val();
+	    ajax_set.data.phrase=voc_tmp;
+	    ajax_set.dataType="jsonp";
+	    ajax_set.error= function(obj, status, err) {
+	    console.log("This is an error message: " + err + " "+obj); };
+//function(){console.log("error with AJAX");};
+	    ajax_set.success = function(data, status, obj) 
+	    {
+		DATA=data; console.log("data: ");console.log(DATA);
+		if(DATA.tuc.length){
+		    $('<span>')
+			.html("<br>A translation is available for other direction!"
+	    		      + "(click to show)")
+			.on('click', function(){
+			    $('#word00').empty().html(voc_tmp);
+			    $('#transl00 >span:first-of-type').remove();
+			    DATA=data;
+			    console.log(data);
+			    interpret_data_Glosbe('00');
+			})
+			.appendTo($('#word00'));
+		};
+    
+	    };
+	    console.log('ajax_set changed : ');console.log(ajax_set);
+	    //ajax_Glosbe(ajax_set);
+	    $.ajax('http://glosbe.com/gapi/translate', ajax_set);
+	    
+	    // console.log("DATA: "+DATA);
+	    // console.log("DATA.tuc: "+DATA.tuc);
+	    // //now better results?
+	    // if(DATA.tuc.length != 0){
+	    // 	$('<span>')
+	    // 	    .html("A translation is available for other direction!"
+	    // 		  + "(click to show)");
+	    // };
+    }}
+);
 
 set_word_div_events = function (w_div){ //defined above
 
@@ -684,15 +835,15 @@ set_word_div_events = function (w_div){ //defined above
 //DEBUGGING:
 //extract_txt();    
 
-//################################################
-//   DATABASE
-//################################################
+// //################################################
+// //   DATABASE
+// //################################################
 
-var request = indexedDB.open("vocabbase");
-request.onsuccess = function(evt)
-{
-    var vb=evt.target.result;
-};
+// var request = indexedDB.open("vocabbase");
+// request.onsuccess = function(evt)
+// {
+//     var vb=evt.target.result;
+// };
 
 
 
@@ -700,3 +851,90 @@ request.onsuccess = function(evt)
 
 
 //});
+
+var download_html_style = function()
+{
+    return  "<style\>"
+	   +"div {border-color: blue; border-style: solid;}"
+           +"</style>";
+}
+
+
+
+var html_prefix = 
+		        "<!DOCTYPE html>"
+		       +"<HTML>"
+		       +"<HEAD> "
+		       +"<meta charset=\"UTF-8\"/> "
+		       + download_html_style()
+		       +"<title>Personal Vocabulary List</title>"
+		       +"</HEAD>"
+		       +"<BODY>"
+		       +"<h1>Your Vocab</h1>"
+		       +"<div>";
+
+var html_suffix =  "</div>"
+		  +"</BODY>"
+		  +"</HTML>";
+
+var vocab_to_html = function()
+{
+    var txt = $('#vocab').get(0).innerHTML;
+    //remove buttons:
+    var button_regex = new RegExp("<button>X</button>", "g");
+    txt = txt.replace(button_regex, "");
+
+    return txt;
+}
+
+//EXAMPLE FOR URI WITH HTML:
+var create_vocab_download = function(){
+    var currtime = new Date();
+    currtime =   currtime.getFullYear().toString()
+               + "-" + (currtime.getMonth()+1).toString()
+	       + "-" + currtime.getDate().toString()
+	       + "_" + currtime.getHours().toString()
+               + "-" + currtime.getMinutes().toString();
+
+    // download link with URI-encoded html-text
+    var link = $('<a>')
+	     .attr({'href' : 'data:text/html;charset=utf-8,'
+		              //URI encoding
+		             + encodeURIComponent(html_prefix 
+			          		+ vocab_to_html() 
+				         	+ html_suffix),
+		   'download' : "vocab"+currtime+".html"
+		   });
+
+    //execute download
+    link.get(0).click();
+    
+    // and instantly remove link (prevent old versions from being downloaded)
+    link.remove();
+             // .html("Download (html)")
+             // .insertAfter(button_download);
+};
+//FOR PLAIN TEXT:
+//http://stackoverflow.com/questions/3665115/create-a-file-in-memory-for-user-to-download-not-through-server
+
+
+
+button_download.on('click', create_vocab_download);
+
+//TEST
+
+add_vocab("some", "test");
+add_vocab("vocab", "to");
+add_vocab("quicken", "debugging");
+add_vocab("of", "vocab sheet");
+
+
+
+
+
+
+
+//TODOs
+//reset no transl found when lang changed
+//no numbers
+//CSS

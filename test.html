@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <HTML lang="en">
   <HEAD>
     <meta charset="UTF-8" />
     <title>Portable Dictionary</title>
-    <link rel="stylesheet" href="test.css"/>
+    <link rel="stylesheet" href="test2.css"/>
 
 
 
@@ -21,10 +21,36 @@
    </article>
 
     <nav id="info">
+        From:
+      <select id="langfrom">
+	<option value="lat">Latin</option>
+	<option value="deu">German</option>
+	<option value="eng" selected="selected">English</option>
+	<option value="fra">French</option>
+      </select>
+      To:
+      <select id="langto">
+	<option value="eng">English</option>
+	<option value="deu" selected="selected">German</option>
+	<option value="fra">French</option>
+	<option value="lat">Latin</option>
+      </select>
+
+      <div id="alt_voc_div">
+	<div id="alt_voc_in_div">
+	  <input id="alt_voc_in" type="text" placeholder="some variable" value="Luftlinie"/>
+	  <button id="button_transl00">translate</button>
+	</div>
+	<div id="transl00">
+	  <span id="word00" class="alt_voc"></span>
+	  <div></div>	  
+	</div>
+      </div>
       This will tell, what languages you chose and maybe 
       some more Info about any word you look at.
+    
     </nav>
-
+    
     <div id="input">
       <textarea id="txtin" class="input"
 		placeholder="Enter your text here">Salve.</textarea>
@@ -33,21 +59,7 @@
 
       <input id="filein" class="input" type="file" multiple/>
       <button id="button_load">Load</button>
-      From:
-      <select id="langfrom">
-	<option value="lat">Latin</option>
-	<option value="deu">German</option>
-	<option value="eng">English</option>
-	<option value="fra">French</option>
-      </select>
-      To:
-      <select id="langto">
-	<option value="eng">English</option>
-	<option value="deu">German</option>
-	<option value="fra">French</option>
-	<option value="lat">Latin</option>
-      </select>
-    </div>
+     </div>
 
     <div id="output">
       <div id="txt"></div>
@@ -60,18 +72,21 @@
       <p>Hier soll mal eine Kurzbeschreibung oder ähnliches stehen.</p>
     </article>
     <article>
-      <a id="Howto"></a><h1>Howto</h1>
+    
+    <div id="vocab_container">
+      Your vocab:
+      <button id="button_download">Download (html)</button>
+      <div id="vocab"></div>
+    </div>
+
+    <a id="Howto"></a><h1>Howto</h1>
       <p>Hier wird die Bedienungsanleitung stehen (falls nötig).</p>
     </article>
     <footer>
       <p><small>Diese Seite gehört mir! lg Gesina Schwalbe</small></p>
     </footer>
-    
-    <div id="vocab" readonly>
-      Your vocab:<br>
-    </div>
 
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.js"></script>
-    <script src="test.js"></script>
+    <script src="test2.js"></script>
   </BODY>
 </HTML>
