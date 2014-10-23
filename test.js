@@ -386,7 +386,12 @@ var extract_filein = function(evt)
 	read_files(evt); //read files, store, process and show content
 	filein.val(''); //remove from input
     }
-    else{ err_noinput();};
+    else
+    {
+	err_noinput();
+	$('#input').hide();
+	$('#output').show();
+    };
 };
 
 
@@ -399,8 +404,14 @@ var extract_txtin = function()
 	extract_input(txtin.val()); //store, process and show input text
 	txtin.val(''); //remove from input
     }
-    else{err_noinput();};
+    else
+    {
+	err_noinput();
+	$('#input').hide();
+	$('#output').show();
+    };
 };
+
 
 
 
@@ -541,7 +552,7 @@ var interpret_data_Glosbe = function(i, recur){
 	//console.log("still there?"); console.log($('#word00'));
 
 	//insert
-	add_transl_entry(j+" "+phrase+means, i);
+	add_transl_entry("*** "+phrase+means, i);
     };
 
 };
@@ -921,12 +932,15 @@ var create_vocab_download = function(){
 
 button_download.on('click', create_vocab_download);
 
+$('#output').hide();
+
+
 //TEST
 
 add_vocab("some", "test");
 add_vocab("vocab", "to");
 add_vocab("quicken", "debugging");
-add_vocab("of", "vocab sheet");
+add_vocab("of", "vocab <br>sheet");
 
 
 
@@ -938,3 +952,5 @@ add_vocab("of", "vocab sheet");
 //reset no transl found when lang changed
 //no numbers
 //CSS
+
+

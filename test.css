@@ -8,19 +8,36 @@
 
 body
 {
-    background-image: -webkit-linear-gradient(left top, #151515, white);
-					      
+    position: relative;
+    background-image:
+    -webkit-linear-gradient(left top, #151515, #cccccc);
+    -moz-linear-gradient(left top, #151515, white);
+    -ms-linear-gradient(left top, #151515, white);
+    -o-linear-gradient(left top, #151515, white);
+    linear-gradient(left top, #151515, white);
 }
 
+
+/* GENERAL STYLE */
+
+/* clickable elements: hover */
+li,
+li>a,
 select,
 button,
 input[type=file]
      {
-	 color: #333333;
+	 color: #444444;
 	 background-color: #BDFF7D;
-	 background-image: -webkit-linear-gradient(top, #8AE62E, #E0FFC2);
+	 background-image:
+	 -webkit-linear-gradient(top, #8AE62E, #E0FFC2);
+	 -moz-linear-gradient(top, #8AE62E, #E0FFC2);
+	 -ms-linear-gradient(top, #8AE62E, #E0FFC2);
+	 -o-linear-gradient(top, #8AE62E, #E0FFC2);
+	 linear-gradient(top, #8AE62E, #E0FFC2);
      }
 
+/* clickable elements: hover */
 select:hover,
 button:hover,
 input[type=file]:hover
@@ -30,35 +47,141 @@ input[type=file]:hover
 	 border-color: white;
      }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6
+/* links */
+a
+{
+    text-decoration:none;
+    font-style: oblique;
+}
+
+
+
+/* headings */
+h1, h2, h3, h4, h5, h6 {   color: #8AE62E; }
+
+
+/*Input font-type*/
+textarea,
+input[type=text]
+     {
+	 font-family: Ubuntu;
+	 background-color: #151515;
+	 background-image:
+	 -webkit-linear-gradient(right top, #151515, #333333);
+	 -moz-linear-gradient(right top, #151515, #333333);
+	 -ms-linear-gradient(right top, #151515, #333333);
+	 -o-linear-gradient(right top, #151515, #333333);
+	 linear-gradient(right top, #151515, #333333);
+     }
+
+
+/* INDIVIDUAL SETTINGS FOR THE CONTAINERS */
+
+/* display-style of input elements */
+/* .input, */
+/* #input, */
+/* #button_go, */
+/* #button_load, */
+/* #more */
+/*     { */
+/* 	display: block; */
+/*     } */
+
+
+/* footer lines */
+footer
+{
+    display: block;
+    float: right;
+}
+
+address,
+time,
+footer
     {
-	color: #8AE62E;
+	color: #333333;
+	font-style: italic;
     }
 
+
+/* header on top */
 header
 {
-    position: relative;
+    position: relative; top: 1em; left: 60%;
 }
+
+
+/* NAVIGATION on the left */
 nav
 {
-    position: absolute;
-    width: 12em;
+    position:fixed; left: 1em; top: 10%;
+    width: 15%;
+    overflow: auto;
+}
+ /* alignment of the rest next to navigation */
+#input, #output, #vocab_container, #about, article
+{
+    margin-left: 20%;
+}
+
+/*list elements*/
+ul
+{
+    text-align: left;
+    list-style: none;
+    padding: 0; margin: 0em;
+    width: 90%;
+}
+
+li
+{
+    display: block;
+    width: 80%; height: auto;
+    padding: 0.2em 0 0.2em 1.5em; margin: 1px;
+    border-width: 1px;
+    border-style: solid; 
+}
+
+/* other elements in nav */
+nav>div
+{
+    margin-top: 1em;
+}
+
+nav>div>div
+{
+    display: inline-block;
 }
 
 
-.input,
-#button_go,
-#button_load,
+/* INPUT */
+#txt_input, #file_input
+{
+    display: block;
+    margin-bottom: 2em;
+}
+
+
+
+
+/* OUTPUT */
+#output
+{
+    font-size: 110%;
+    padding: 0.5em;
+}
+
 #more
-    {
-	display: block;
-	margin-left: 13em;
-    }
+{
+    color: #6BB224;
+    display: block;
+    margin-top: 0.5em;
+    margin-bottom: 2em;
+}
+#more:hover {  color: #8AE62E;  transition:  color 0.2s linear; }
+
+#button_add, #button_reset { margin-right: 2em; }
+
 
 .transl
 {
@@ -88,29 +211,14 @@ nav
     width: 60%; height: 1.5em;
     margin-top: 1em;
     padding: 0.5em;
-    background-color: #151515;
-    background-image: -webkit-linear-gradient(right top, #151515, #333333);
+    transition: height 0.5s ease;
 }
 
-#txtin:focus
+#txtin:hover, #txtin:focus
 	   {
 	       height: 10em;
 	   }
 
-#output
-{
-    font-size: 110%;
-    margin: 2em;
-    padding: 0.5em;
-}
-
-
-
-#more,
-a
-    {
-	color: #6BB224;
-    }
 .transl>div
 {
     height: 7em;
@@ -118,14 +226,27 @@ a
     font-size: 110%;
 }
 
-.voc_div > span
-{
-    display: inline-block;
-}
 
-/*Input font-type*/
-textarea,
-input[type=text]
-     {
-	 font-family: Ubuntu;
-     }
+
+
+
+/* VOCABULARY */
+#vocab_container { display: block; margin-bottom: 5em;}
+.voc_div>span 
+{
+    float:left;
+    border-top-style: solid;
+    border-radius: 0;
+    border-color: #999999;
+}
+.voc_div>span:last-of-type
+		  {
+		      width:70%;   
+		  }
+.voc_div>span:first-of-type
+		  {
+		      width:20%;
+		  }
+
+
+

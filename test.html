@@ -3,90 +3,216 @@
   <HEAD>
     <meta charset="UTF-8" />
     <title>Portable Dictionary</title>
-    <link rel="stylesheet" href="test2.css"/>
 
-
-
+    <!-- GMF fonts -->
+    <link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext'
+	  rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Ubuntu'
+	  rel='stylesheet' type='text/css'>
+    <!-- extern stylesheets ? 
+    <link rel="stylesheet" href="./jquery-ui-1.11.2.custom/jquery-ui.theme.css"/>
+    <link rel="stylesheet"
+	  href="./jquery-ui-1.11.2.custom/jquery-ui.css"/>
+    <link rel="stylesheet"
+	  href="./jquery-ui-1.11.2.custom/jquery-ui.min.css"/>
+    <link rel="stylesheet"
+	  href="./jquery-ui-1.11.2.custom/jquery-ui.structure.min.css"/>
+    <link rel="stylesheet"
+	  href="./jquery-ui-1.11.2.custom/jquery-ui.structure.css"/>
+    <link rel="stylesheet"
+	  href="./jquery-ui-1.11.2.custom/jquery-ui.theme.min.css"/>
+    -->
+    <link rel="stylesheet" href="test.css"/>
   </HEAD>
   
   <BODY>
     <header>
 	<h1>Portable Dictionary</h1>
+
+	
     </header>
     
-   
     <article>
 	<p>Quick start, enter your text below:</p>
 	<p><small>(For more info see <a href="#Howto">below</a>.)</small></p>
-   </article>
+    </article>
 
     <nav id="info">
-        From:
-      <select id="langfrom">
-	<option value="lat">Latin</option>
-	<option value="deu">German</option>
-	<option value="eng" selected="selected">English</option>
-	<option value="fra">French</option>
-      </select>
-      To:
-      <select id="langto">
-	<option value="eng">English</option>
-	<option value="deu" selected="selected">German</option>
-	<option value="fra">French</option>
-	<option value="lat">Latin</option>
-      </select>
+      
+      <!-- navigation within document -->
+      <div data-role="navbar" data-grid="c">
+	<ul>
+	  <li><a href="#About">About</a></li>
+	  <li><a href="#Workplace">Workplace</a></li>
+	  <li><a href="#Vocabulary">Vocabulary</a></li>
+	</ul>
+      </div>
 
+
+      <!-- language select -->
+      <div id="lang_select">
+	<div>
+	  From:<br>
+	  <select id="langfrom">
+	    <option value="lat">Latin</option>
+	    <option value="deu" selected="selected">German</option>
+	    <option value="eng">English</option>
+	    <option value="fra">French</option>
+	  </select>
+	</div>
+	<div>
+	  To: <br>
+	  <select id="langto">
+	  <option value="eng" selected="selected">English</option>
+	  <option value="deu">German</option>
+	  <option value="fra">French</option>
+	  <option value="lat">Latin</option>
+	  </select>
+	</div>
+      </div>
+
+      <!-- alternative input for vocabulary -->
       <div id="alt_voc_div">
+
+	<!-- input for single vocab -->
 	<div id="alt_voc_in_div">
-	  <input id="alt_voc_in" type="text" placeholder="some variable" value="Luftlinie"/>
+	  <input id="alt_voc_in" type="text"
+		 placeholder="some vocab" value="Luft"/>
 	  <button id="button_transl00">translate</button>
 	</div>
+	
+	<!-- output of translation -->
 	<div id="transl00">
 	  <span id="word00" class="alt_voc"></span>
 	  <div></div>	  
 	</div>
+
+	<!-- short info -->
+	<p>
+	  This will tell, what languages you chose and maybe 
+	  some more Info about any word you look at.
+	</p>
+	
       </div>
-      This will tell, what languages you chose and maybe 
-      some more Info about any word you look at.
-    
-    </nav>
-    
-    <div id="input">
-      <textarea id="txtin" class="input"
-		placeholder="Enter your text here">Salve.</textarea>
       
-      <button id="button_go">GO</button>
+    </nav>
 
-      <input id="filein" class="input" type="file" multiple/>
-      <button id="button_load">Load</button>
-     </div>
 
-    <div id="output">
-      <div id="txt"></div>
-      <span id="more">Show more</span>
-      <button id="button_add">add text</button>
-      <button id="button_reset">RESET</button>
+    <!-- INPUT OF TEXTS ETC. TO TRANSLATE ON THE FLY -->
+    <div id="input">
+      <a id="Workplace"></a>
+      <p>Hier soll mal eine Kurzbeschreibung oder ähnliches stehen.</p>
+      <!-- input via typing -->
+      <div id="txt_input">
+	<textarea id="txtin" class="input"
+		  placeholder="Enter your text here">
+	  Der Zweite Weltkrieg von 1939 bis 1945 war der zweite global
+	  geführte Krieg sämtlicher Großmächte des 20. Jahrhunderts und
+	  stellt den „bislang größten militärischen Konflikt“[1] in der
+	Geschichte der Menschheit dar. Im Kriegsverlauf bildeten sich
+	zwei militärische Allianzen, die als Achsenmächte und
+	Alliierte bezeichnet werden. Direkt oder indirekt waren über
+	60 Staaten am Krieg beteiligt, über 110 Millionen Menschen
+	standen unter Waffen.[2] Die Zahl der Kriegstoten liegt
+	zwischen 60 und 70 Millionen
+	(s. u. Opferzahlen). Gekennzeichnet wurde der Konflikt unter
+	anderem durch Blitzkriege, Flächenbombardements und den
+	bisher einzigen Einsatz von Atomwaffen sowie Holocaust,
+	Porajmos und zahllose Kriegsverbrechen.
+
+      Der Zweite Weltkrieg begann mit dem deutschen Überfall auf
+      Polen am 1. September 1939. Zu diesem Zeitpunkt führte Japan
+      bereits einen Grenzkrieg gegen die Sowjetunion (1938/39), und
+      in Ostasien befand es sich mit China seit dem Zwischenfall an
+      der Marco-Polo-Brücke am 7. Juli 1937, wenn nicht gar seit dem
+      Mukden-Zwischenfall am 18. September 1931, im
+      Pazifikkrieg. Ohne die Ereignisse in Europa wäre dieser jedoch
+      isoliert geblieben; zudem hat sich Japan nicht direkt an den in
+	Europa begonnenen Feindseligkeiten beteiligt.[3]
+
+      Bis Mitte 1941 wurde der Konflikt von der deutschen Wehrmacht
+      in Europa vorwiegend als Eroberungskrieg geführt. Nach Polen
+      wurden in kurzen, konzentriert geführten Feldzügen Dänemark,
+      Norwegen, Belgien, die Niederlande, Luxemburg, der Großteil
+      Frankreichs, Jugoslawien und Griechenland erobert und
+      besetzt. Die Gebiete wurden teils ins Deutsche Reich
+      eingegliedert, teils mit vom Deutschen Reich abhängigen
+      Regierungen beherrscht und wirtschaftlich ausgebeutet. Juden,
+      Oppositionelle und des Widerstands gegen den
+      Nationalsozialismus verdächtigte Personen wurden planmäßig
+      verschleppt, zur Zwangsarbeit herangezogen oder sofort
+      ermordet. Großbritannien war von der Kapitulation Frankreichs
+      (22. Juni 1940) bis zum deutschen Angriff auf die Sowjetunion
+      (22. Juni 1941) Deutschlands einzig verbliebener europäischer
+      Kriegsgegner. Dieses Durchhalten der Briten, das von Churchills
+      Standfestigkeit gegenüber Adolf Hitler angeführt wurde, war von
+      großer, wohl mitentscheidender Bedeutung für den Verlauf des
+      Zweiten Weltkrieges.[4] Das nationalsozialistische Deutsche
+      Reich führte den Krieg gegen die UdSSR als einen
+      Vernichtungskrieg.[5] Hitler gilt dabei als treibende
+      Kraft. Bereits in Mein Kampf hatte er die Vorstellung der
+      Eroberung von „Lebensraum im Osten“ weiterentwickelt, indem er
+      sie mit Sozialdarwinismus, Rassenideologie, Antisemitismus und
+      Antibolschewismus verknüpfte. Immer wieder betonte er, dass er
+      Osteuropa bis zum Ural als Ergänzungs- und Siedlungsraum für
+      ein künftiges „Großgermanisches Reich“ begriff.[6] Die Rote
+      Armee konnte den Vormarsch der Wehrmacht im Winter 1941/42 vor
+      Moskau erstmals abwehren. Nachdem die Rote Armee im Winter
+      1942/43 einen erneuten Vormarsch bei Stalingrad stoppen konnte,
+      drängte sie die Invasoren nach und nach zurück. Im Juni 1944
+      gelang ihr dann die Zerschlagung der Heeresgruppe Mitte, womit
+      die deutsche Niederlage unausweichlich geworden war. Bis Ende
+	1944 hatte sich die geschlagene Wehrmacht
+	</textarea><button id="button_go">GO</button>
+      </div>
+
+      <!-- input via file -->
+      Or simply browse for a text file:
+      <div id="file_input">
+	<input id="filein" class="input" type="file" multiple/>
+	<button id="button_load">Load</button>
+      </div>
     </div>
 
-    <article>
-      <p>Hier soll mal eine Kurzbeschreibung oder ähnliches stehen.</p>
-    </article>
-    <article>
     
+    <!-- OUTPUT OF THE GIVEN TEXTS -->
+    <div id="output" class="output">
+      <div id="txt" class="output"></div>
+      <span id="more" class="output">show more</span>
+      <button id="button_add" class="output">add text</button>
+      <button id="button_reset" class="output">RESET</button>
+    </div>
+
+    
+    <!-- VOCABULARY SHEET -->
     <div id="vocab_container">
+      <a id="Vocabulary"></a>
       Your vocab:
       <button id="button_download">Download (html)</button>
+      <!-- actal vocabulary which can be downloaded -->
       <div id="vocab"></div>
     </div>
 
-    <a id="Howto"></a><h1>Howto</h1>
+    
+    <!-- ABOUT - ALL YOU NEED TO NOW TO USE THE WEBSITE -->
+    <article id="about">
+      <a id="About"></a><h1>Howto</h1>
       <p>Hier wird die Bedienungsanleitung stehen (falls nötig).</p>
     </article>
+
+
+    <!-- COPYWRITE AND THANKS -->
     <footer>
-      <p><small>Diese Seite gehört mir! lg Gesina Schwalbe</small></p>
+	<address>
+          by
+	  <a href="mailto:gesina.schwalbe@googlemail.com">Gesina Schwalbe</a>
+	</address>last edited: <time>2014-10-23 20:30</time>
     </footer>
 
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.js"></script>
-    <script src="test2.js"></script>
+  <!--<script src="./jquery-ui-1.11.2.custom/jquery-ui.min.js"></script>
+  <script src="./jquery-ui-1.11.2.custom/jquery-ui.js"></script> -->
+  <script src="test.js"></script>
+    
   </BODY>
 </HTML>
