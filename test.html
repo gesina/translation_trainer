@@ -26,34 +26,22 @@
   </HEAD>
   
   <BODY>
-    <header>
-	<h1>Portable Dictionary</h1>
-
-	
-    </header>
-    
-    <article>
-	<p>Quick start, enter your text below:</p>
-	<p><small>(For more info see <a href="#Howto">below</a>.)</small></p>
-    </article>
 
     <nav id="info">
-      
+    <!-- <div id="nav_div">   -->
       <!-- navigation within document -->
-      <div data-role="navbar" data-grid="c">
+     
 	<ul>
 	  <li><a href="#About">About</a></li>
 	  <li><a href="#Workplace">Workplace</a></li>
 	  <li><a href="#Vocabulary">Vocabulary</a></li>
 	</ul>
-      </div>
 
 
       <!-- language select -->
       <div id="lang_select">
 	<div>
-	  From:<br>
-	  <select id="langfrom">
+	  From:<select id="langfrom">
 	    <option value="lat">Latin</option>
 	    <option value="deu" selected="selected">German</option>
 	    <option value="eng">English</option>
@@ -61,8 +49,7 @@
 	  </select>
 	</div>
 	<div>
-	  To: <br>
-	  <select id="langto">
+	  To:<select id="langto">
 	  <option value="eng" selected="selected">English</option>
 	  <option value="deu">German</option>
 	  <option value="fra">French</option>
@@ -84,24 +71,31 @@
 	<!-- output of translation -->
 	<div id="transl00">
 	  <span id="word00" class="alt_voc"></span>
-	  <div></div>	  
+	  <ul class="transl_entries"></ul>	  
 	</div>
-
-	<!-- short info -->
-	<p>
-	  This will tell, what languages you chose and maybe 
-	  some more Info about any word you look at.
-	</p>
 	
       </div>
-      
+    <!-- </div>       -->
     </nav>
 
 
+<!-- MAIN PART ON THE RIGHT -->
+<div id="main">
     <!-- INPUT OF TEXTS ETC. TO TRANSLATE ON THE FLY -->
+
+    <header>
+      <h1>Portable Dictionary</h1>
+    </header>
+    
+
+
+
     <div id="input">
       <a id="Workplace"></a>
-      <p>Hier soll mal eine Kurzbeschreibung oder ähnliches stehen.</p>
+
+	<p>Quick start, enter any text you need help with the translation below:</p>
+	<p><small>(For more info see <a href="#About">below</a>.)</small></p>
+    
       <!-- input via typing -->
       <div id="txt_input">
 	<textarea id="txtin" class="input"
@@ -187,7 +181,7 @@
     <!-- VOCABULARY SHEET -->
     <div id="vocab_container">
       <a id="Vocabulary"></a>
-      Your vocab:
+      <h2>Your vocab</h2>
       <button id="button_download">Download (html)</button>
       <!-- actal vocabulary which can be downloaded -->
       <div id="vocab"></div>
@@ -200,6 +194,7 @@
       <p>Hier wird die Bedienungsanleitung stehen (falls nötig).</p>
     </article>
 
+    </div>
 
     <!-- COPYWRITE AND THANKS -->
     <footer>

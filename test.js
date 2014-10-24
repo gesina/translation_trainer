@@ -52,16 +52,16 @@ var transl_stylebelow = function(id){
     var t = $('#'+transl_id+id);
     var w = $('#'+word_id+id);
     if(t)
-    {return {'top' : "1em" ,
-	    'left': (0.5*w.width()).toString()};}
+    {return {'top' : (w.height()).toString()+ "px" ,
+	    'left': (0.3*w.width()-10).toString() + "px"};}
     else { err_nomatchingtransl(); return false;}
 };
 var transl_styleover = function(id){
     var t = $('#'+transl_id+id);
     var w = $('#'+word_id+id);
     if(t)
-    {return {'top' : (-t.height()-0.5*w.height()).toString()+"px",
-	     'left': (0.5*w.width()).toString()};}
+    {return {'top' : (-t.height()-0.8*w.height()).toString()+"px",
+	     'left':  (0.3*w.width()-10).toString() + "px"};}
     else { err_nomatchingtransl(); return false;}
 };
 
@@ -166,10 +166,10 @@ var create_transl_div = function(i)
 	//span for language information
 	$('<span>').attr({'id':"transl_lang"+i,'class':"transl_lang"})
 	           .html($('#langfrom').val() +" - "+$('#langto').val())
-	           .prependTo(transl);
+	    .appendTo($('<div class="lang">').prependTo(transl));
 	
 	//div for actual text-spans
-	$('<div>').appendTo(transl);
+	$('<ul class="transl_entries">').appendTo(transl);
 	
 	// text field to add personal translation
 	$('<input type="text">')
@@ -419,10 +419,10 @@ var extract_txtin = function()
 
 var add_transl_entry = function(str, id)
 {
-    var div=$('#'+transl_id+id+'>div:first-of-type');
+    var div=$('#'+transl_id+id+'> .transl_entries');
     
-    $('<span>')
-	.html("<br>"+str)
+    $('<li>')
+	.html(str)
 	.on('click', function(){
 	    add_vocab($('#'+word_id+id).html(), str);
 	    })
@@ -534,10 +534,21 @@ var interpret_data_Glosbe = function(i, recur){
 	//meanings:
 	if(DATA.tuc[j].meanings) //any mentioned meanings?
 	{
-	    means = means + "<br>  - " + DATA.tuc[j].meanings[0].text; //first
+	    //example or description?
+	    if(DATA.tuc[j].meanings[0].language === $('#langfrom').val())
+	    {means = means + "<br> <b>e.g.</b> "; }   //example
+	    else {means = means + "<br> <b>=</b> "; } //description
+	    
+	    means = means + "<i>"+DATA.tuc[j].meanings[0].text+"</i>"; //first
+
+
 	    for(var k=1; k<DATA.tuc[j].meanings.length-1; k++)
 	    {
-		means = means + "<br>  - " + DATA.tuc[j].meanings[k].text;
+		if(DATA.tuc[j].meanings[k].language === $('#langfrom').val())
+		{means = means + "<br> <b>e.g.</b>  "; }   //example
+		else {means = means + "<br> <b>=</b>  "; } //description
+	    
+		means = means + "<i>"+DATA.tuc[j].meanings[k].text+"</i>";
 	    };
 	};
 	
@@ -545,14 +556,15 @@ var interpret_data_Glosbe = function(i, recur){
 	var phrase="";
 	if(DATA.tuc[j].phrase) //any phrase mentioned?
 	{
-	    phrase=DATA.tuc[j].phrase.text;
+	    phrase="<b>" + DATA.tuc[j].phrase.text + "</b>";
 	}
+	else {phrase = "--";};
 
 	//DEBUGGING
 	//console.log("still there?"); console.log($('#word00'));
 
 	//insert
-	add_transl_entry("*** "+phrase+means, i);
+	add_transl_entry(phrase + means, i);
     };
 
 };
@@ -601,22 +613,24 @@ var init_transl = function(i)
     if(!$("#"+transl_id+i).length) //does it already exist? 
        //and if so, are the languages ok?
         {
-	console.log("changing transl"+i);
-	var wdiv= $('#'+word_div_id+i);
-	if(wdiv.length) //word_div already defined?
-	{
-	    create_transl_div(i).appendTo(wdiv);
-	    load_transl_Glosbe(i);
-	    return true;
+	    console.log("changing transl"+i);//DEBUGGING
+	    var wdiv= $('#'+word_div_id+i);
+	    if(wdiv.length) //word_div already defined?
+	    {
+		create_transl_div(i).appendTo(wdiv);
+		load_transl_Glosbe(i);
+		return true;
+	    }
+	    else {err_nomatchingword(); return false;}
 	}
-	else {err_nomatchingword(); return false;}
-    }
-       else if($('#langfrom').val()!=$('#transl_lang'+i).html().substring(0,3) ||
-               $('#langto').val()!=$('#transl_lang'+i).html().substring(6,9))
-       {
-	   $('#'+transl_id+i+'>div:first-of-type').empty();
-	   load_transl_Glosbe(i);
-       };
+    else if($('#langfrom').val()!=$('#transl_lang'+i).html().substring(0,3) ||
+            $('#langto').val()!=$('#transl_lang'+i).html().substring(6,9))
+    {
+	var lang=$('#transl_lang'+i).html($('#langfrom').val()
+					  + " - "
+					  +$('#langto').val());
+	load_transl_Glosbe(i);
+    };
 
     return true;
 };
@@ -662,6 +676,8 @@ var add_vocab = function(expr, transl)
 	    $(this.parentNode).remove();
 	})
 	.appendTo(div);
+    //for css (little hack to enable spacing):
+    $('<div>').appendTo(div);
 };
 
 
@@ -756,22 +772,22 @@ $('#button_transl00').on('click', function(){
     $('#word00').html(voc_tmp);
     //DEBUGGING: console.log('clicked' + ' value: ' +$('#alt_voc_in').val());    
     
-    $('#transl00>div:first-of-type').empty();
+    $('#transl00> .transl_entries').empty();
     //load transl and save in transl00
     load_transl_Glosbe('00');
 
     //translation not successful?
     if($('#word00').html()===voc_tmp)
 	{
-	    $('#word00').empty();
+	    //$('#word00').empty();
 	    //new ajax query with switched languages
 	    var ajax_set=settings();
 	    console.log('ajax_set : ');console.log(ajax_set);
 	    var new_result = "";
 	    //switch languages
 	    DATA="blubb";
-	    ajax_set.data.dest=$('#langfrom').val();
-	    ajax_set.data.from=$('#langto').val();
+	    ajax_set.data.dest=$('#langto').val();
+	    ajax_set.data.from=$('#langfrom').val();
 	    ajax_set.data.phrase=voc_tmp;
 	    ajax_set.dataType="jsonp";
 	    ajax_set.error= function(obj, status, err) {
@@ -783,7 +799,7 @@ $('#button_transl00').on('click', function(){
 		if(DATA.tuc.length){
 		    $('<span>')
 			.html("<br>A translation is available for other direction!"
-	    		      + "(click to show)")
+	    		      + "\n (click to show)")
 			.on('click', function(){
 			    $('#word00').empty().html(voc_tmp);
 			    $('#transl00 >span:first-of-type').remove();
@@ -866,8 +882,15 @@ set_word_div_events = function (w_div){ //defined above
 var download_html_style = function()
 {
     return  "<style\>"
-	   +"div {border-color: blue; border-style: solid;}"
-           +"</style>";
+	+".voc_div>span"
+	+"{float:left;"
+	+"border-top-style: solid;"
+	+"border-radius: 0;"
+	+"border-color: #999999;}"
+	+".voc_div>span:last-of-type {width:70%;}"
+	+".voc_div>span:first-of-type {width:20%;}"
+	+".voc_div>dborder-color: blue; border-style: solid;iv {clear:both;}"
+        +"</style>";
 }
 
 
@@ -950,7 +973,7 @@ add_vocab("of", "vocab <br>sheet");
 
 //TODOs
 //reset no transl found when lang changed
-//no numbers
-//CSS
-
+//dont show "show more" when all shown
+//Howto
+//Documentation
 

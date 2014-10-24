@@ -21,20 +21,21 @@ body
 /* GENERAL STYLE */
 
 /* clickable elements: hover */
-li,
+nav>ul>li,
 li>a,
 select,
 button,
 input[type=file]
      {
 	 color: #444444;
+	 font-weight: bold;
 	 background-color: #BDFF7D;
 	 background-image:
-	 -webkit-linear-gradient(top, #8AE62E, #E0FFC2);
-	 -moz-linear-gradient(top, #8AE62E, #E0FFC2);
-	 -ms-linear-gradient(top, #8AE62E, #E0FFC2);
-	 -o-linear-gradient(top, #8AE62E, #E0FFC2);
-	 linear-gradient(top, #8AE62E, #E0FFC2);
+	 -webkit-linear-gradient(bottom, #8AE62E, #E0FFC2);
+	 -moz-linear-gradient(bottom, #8AE62E, #E0FFC2);
+	 -ms-linear-gradient(bottom, #8AE62E, #E0FFC2);
+	 -o-linear-gradient(bottom, #8AE62E, #E0FFC2);
+	 linear-gradient(bottom, #8AE62E, #E0FFC2);
      }
 
 /* clickable elements: hover */
@@ -52,6 +53,7 @@ a
 {
     text-decoration:none;
     font-style: oblique;
+    color: #8AE62E;
 }
 
 
@@ -107,36 +109,47 @@ footer
 /* header on top */
 header
 {
-    position: relative; top: 1em; left: 60%;
+    position: relative; top: 1em; margin-bottom: 3em;
+    text-align: center;
 }
 
 
 /* NAVIGATION on the left */
 nav
 {
-    position:fixed; left: 1em; top: 10%;
-    width: 15%;
-    overflow: auto;
+    position: fixed; left: 1em; top: 10%;bottom: 10%;
+    width: 20%; height: 80%;
+    font-size: 70%;
 }
- /* alignment of the rest next to navigation */
-#input, #output, #vocab_container, #about, article
+
+/* alignment of the rest next to navigation */
+#main
 {
-    margin-left: 20%;
+    float: right;
+    width: 75%;
+    padding: 0 10px 0 20px;
+    margin-left: 30%;
+}
+
+#main>*
+{
+    margin-top: 5em;
 }
 
 /*list elements*/
-ul
+nav>ul
 {
     text-align: left;
     list-style: none;
     padding: 0; margin: 0em;
-    width: 90%;
+    width: 150px;
 }
 
-li
+nav>ul>li
 {
+    heigth:30%;
     display: block;
-    width: 80%; height: auto;
+    width: 85%;
     padding: 0.2em 0 0.2em 1.5em; margin: 1px;
     border-width: 1px;
     border-style: solid; 
@@ -145,13 +158,42 @@ li
 /* other elements in nav */
 nav>div
 {
-    margin-top: 1em;
+    margin-top: 3%;
 }
 
-nav>div>div
+#lang_select, #lang_select>div
+		  {
+		      overflow:hidden;
+		      padding-top: 2px;
+		      width: 150px;
+		  }
+#lang_select>div {width: 100%;}
+#lang_select select
 {
-    display: inline-block;
+    float: right;
 }
+
+
+#alt_voc_in_div,
+#alt_voc_in_div>input
+    {width: 150px; margin: 5px 0;
+     overflow:hidden;}
+#alt_voc_in_div>button {float: right; }
+
+#alt_voc_div
+{
+    height: 50%;
+}
+
+#transl00 {height: 100%;}
+
+#transl00>ul
+{
+    height: 100%;
+    overflow: auto;
+}
+
+
 
 
 /* INPUT */
@@ -177,20 +219,69 @@ nav>div>div
     display: block;
     margin-top: 0.5em;
     margin-bottom: 2em;
+    transition:  color 0.2s linear; 
 }
-#more:hover {  color: #8AE62E;  transition:  color 0.2s linear; }
+#more:hover { color: #8AE62E; text-shadow: 3px 3px 5px #222222;}
 
 #button_add, #button_reset { margin-right: 2em; }
 
 
 .transl
 {
+    background-color: #8AE62E;
+
+    background-image:
+	 -webkit-linear-gradient(bottom, #8AE62E, #E0FFC2);
+	 -moz-linear-gradient(bottom, #8AE62E, #E0FFC2);
+	 -ms-linear-gradient(bottom, #8AE62E, #E0FFC2);
+	 -o-linear-gradient(bottom, #8AE62E, #E0FFC2);
+	 linear-gradient(bottom, #8AE62E, #E0FFC2);
+    
     position: absolute;
-    background-color: yellow; z-index: 10;
-    border-color: blue; border-style: solid;
-    width: auto; height:5cm;
-    overflow: scroll;
+    z-index: 10;
+    width: auto; height:200px;
+    padding: 10px;
+    
+    border-radius: 30px;
+    box-shadow: 5px 5px 3px #222222;
 }
+
+/*  font color  */
+.transl span,
+.transl li,
+.transl li *
+ {color: #444444; text-shadow: none;}
+
+/*  language  */
+.transl>div:first-of-type
+		{
+		    font-size: 60%; font-weight: bold;
+		    text-align: right;
+		    padding: 3px 3px 0 0;
+		    height:auto;
+		}
+
+.transl_lang { border-style: solid; border-color: #8AE62E; border-radius: 30px;}
+
+
+.transl>ul
+{
+    height: 115px ; margin 0px;
+    overflow: auto;
+    font-size: 60%;
+}
+
+.transl button {margin: 2px 3px 3px 0;
+		float:right;  border-radius: 30px;}
+
+.transl button,
+.transl input 
+ {
+     heigth: 1.5em;
+     font-size: 60%;
+ }
+
+
 
 .word,
 .word_div
@@ -201,10 +292,12 @@ nav>div>div
 }
 
 .word_div:hover
-{
-    border-radius: 0.5em;
-    background-color: green;
-}
+	      {
+		  font-weight: bold;
+		  font-size: large;
+		  color: white;
+		  text-shadow: 3px 3px 5px #222222; 
+	      }
 
 #txtin
 {
@@ -219,19 +312,14 @@ nav>div>div
 	       height: 10em;
 	   }
 
-.transl>div
-{
-    height: 7em;
-    overflow: inherit;
-    font-size: 110%;
-}
 
 
 
 
 
 /* VOCABULARY */
-#vocab_container { display: block; margin-bottom: 5em;}
+#vocab_container { display: block; margin-bottom: 5em; overflow: hidden;}
+#button_download {margin-left: auto;}
 .voc_div>span 
 {
     float:left;
@@ -247,6 +335,8 @@ nav>div>div
 		  {
 		      width:20%;
 		  }
+
+.voc_div>div {clear:both;}
 
 
 
