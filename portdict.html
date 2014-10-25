@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<HTML lang="en">
+
+  
+  <HEAD>
+
+    <meta charset="UTF-8" />
+    <title>Translation Trainer</title>
+
+    <!-- GMF fonts -->
+    <link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext'
+	  rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Ubuntu'
+	  rel='stylesheet' type='text/css'>
+
+    <!-- own stylesheet -->
+    <link rel="stylesheet" href="portdict.css"/>
+    
+  </HEAD>
+
+
+  
+  <BODY>
+
+    
+    <!-- WARNING IN CASE JAVASCRIPT IS DISABLED -->
+    <noscript>
+      <div id="noscript">
+	<p> I'm afraid your Browser has disabled Javascript - please
+	  examine your settings!<br>
+	  <small> Be aware, that without JavaScript, the main functionality of
+	  this website will be blocked. </small>
+	</p>
+      </div>
+    </noscript>
+
+
+    
+    <!-- NAVIGATION within document  and  -->
+    <!-- ONE-WORD-TRANSLATION             -->
+    <nav id="info">
+
+      <!-- navigation links -->
+      <ul>
+	<li><a href="#About">About</a></li>
+	<li><a href="#Workplace">Workplace</a></li>
+	<li><a href="#Vocabulary">Vocabulary</a></li>
+      </ul>
+
+
+      <!-- language select -->
+      <div id="lang_select">
+	<div>
+	  From:<select id="langfrom">
+	    <option value="lat">Latin</option>
+	    <option value="deu" selected="selected">German</option>
+	    <option value="eng">English</option>
+	    <option value="fra">French</option>
+	    <option value="">
+	      type ...
+	      <input type="text" id="lang_opt_from" class="lang_opt"/>
+	      </option>
+	  </select>
+	</div>
+	<div>
+	  To:<select id="langto">
+	  <option value="eng" selected="selected">English</option>
+	  <option value="deu">German</option>
+	  <option value="fra">French</option>
+	  <option value="lat">Latin</option>
+	   <option value="">
+	      type ...
+	      <input type="text" class="lang_opt" id="lang_opt_to"/>
+	      </option>
+	  </select>
+	</div>
+      </div>
+
+      
+      <!-- alternative input for vocabulary -->
+      <div id="alt_voc_div">
+
+	<!-- input for single vocab -->
+	<div id="alt_voc_in_div">
+	  <input id="alt_voc_in" type="text"
+		 placeholder="some vocab" value="Luft"/>
+	  <button id="button_transl00">translate</button>
+	</div>
+	
+	<!-- output of translation -->
+	<div id="transl00">
+	  <span id="word00" class="alt_voc"></span>
+	  <ul class="transl_entries"></ul>	  
+	</div>
+	
+      </div>
+      
+    </nav>
+
+
+    <!-- MAIN PART ON THE RIGHT -->
+    <div id="main">
+
+      <header>
+	<h1>Portable Dictionary</h1>
+	<small>Your personal <b>T</b>ranslation <b>T</b>rainer</small>
+      </header>
+      
+
+
+
+      <div id="input">
+	<a id="Workspace"></a>
+	<h2>Workspace</h2>
+	<p>Quick start, enter any text below for translation assistance:</p>
+	
+	<!-- input via typing -->
+	<div id="txt_input">
+	  <textarea id="txtin" class="input"
+		    placeholder="Enter your text here"></textarea>
+	  <button id="button_go">GO</button>
+	</div>
+
+	<!-- input via file -->
+	<p>Or simply browse for a text file:</p>
+	<div id="file_input">
+	  <input id="filein" class="input" type="file" multiple/>
+	  <button id="button_load">Load</button>
+	</div>
+
+	<p><small>(For more info see <a href="#About">below</a>.)</small></p>
+	
+      </div>
+
+      
+      <!-- OUTPUT OF THE GIVEN TEXTS -->
+      <div id="output" class="output">
+	<div id="txt" class="output"></div>
+	<span id="more" class="output">show more</span>
+	<button id="button_add" class="output">add text</button>
+	<button id="button_reset" class="output">RESET</button>
+      </div>
+
+      
+      <!-- VOCABULARY SHEET -->
+      <div id="vocab_container">
+	<a id="Vocabulary"></a>
+	<h2>Your vocab</h2>
+	<div id="vocab_entry">
+	  <input type="text" id="vocab_entry_expr"
+		 placeholder="expression"/>
+	  <input type="text" id="vocab_entry_transl"
+		 placeholder="translation"/>	  
+	  <button id="button_vocab_entry">add entry</button>
+	</div>
+	<button id="button_download">Download (html)</button>
+	<button id="button_vocab_clear">clear all</button>
+	<!-- actal vocabulary which can be downloaded -->
+	<div id="vocab"></div>
+      </div>
+
+      
+      <!-- ABOUT -->
+      <!-- = all you need to know about/ to use this website -->
+      <article id="about">
+	<a id="About"></a><h2>About</h2>
+	<p>This webpage is a project during the HTML5, CSS3 and
+	  JavaScript Course at the University of Regensburg.</p>
+	<section>
+	  <h3>Features</h3>
+	  <h4>On the fly translation</h4>
+	  <p>
+	    You can enter any text or upload any text file into your
+	    <a href="#Workspace">Workspace</a> where you can read it
+	    without major concerns about vocabulary:<br>
+	    Just take your cursor over any word you cannot recall at
+	    the moment and a translation, if available, will pop up.<br>
+	    Also, in order to spare you precious time even if the
+	    length of the text could be measured in meters, the
+	    calculation takes place directly when you need it. So don't
+	    forget pressing the "show more"-button whenever the page is
+	    done.
+	  </p>
+
+	  <h4>Language Select</h4>
+	  <p>
+	    Before starting to work you will need the correct
+	    languages to translate from into. Those you can choose on
+	    the left side in the navigation bar. Predefined are
+	    English, German, French and Latin. Of course, that's not
+	    even by far the extend of choices Glosbe, the dictionary
+	    this site works with, offers. Therefore you can simply
+	    enter the language code instead by choosing type in the
+	    select menu.<br>
+	    <a href="https://glosbe.com/all-languages">These</a>
+	    are Glosbes supported Languages.<br>
+	    And
+	    <a href="http://en.wikipedia.org/wiki/List_of_ISO_639-3_codes">here</a>
+	    you can find Wikipedias collection of the ISO 639-3
+	    language codes used by glosbe, e.g. <br>
+	    <ul>
+	      <li>acx (Arabic)</li>
+	      <li>bar (Bavarian)</li>
+	      <li>cdo (Chinese)</li>
+	      <li>dan (Danish)</li>
+	      <li>grc (Ancient Greek)</li>
+	      <li>pol (Polish)</li>
+	      <li>rus (Russian)</li>
+	      <li>sco (Scots)</li>
+	      <li>spa (Spanish)</li>
+	    </ul>
+	  </p>
+	  <h4>Single Translation</h4>
+	  <p>
+	    If you want to know some word that does not occur in your
+	    text or another form of it is asked for, simply use the
+	    translation field static to the left.<br>
+	    In case you forgot to switch the languages, the translation
+	    field below will tell you.
+	  </p>
+	    
+	  <h4>Vocabulary Sheet</h4>
+	  <p>
+	    Several more features will assist you training your text
+	    understanding and vocabulary: Create your
+	    own <a href="#Vocab">Vocab Sheet</a> to
+	    save, send, print and take wherever you go.<br>
+	    Any translation, as well in the translation section to
+	    the left as in any translation container for a word in the
+	    test, is clickable and will directly appear as entry in
+	    the vocabulary sheet below. Furthermore it's possible to
+	    add your own translation if you found a better one or want
+	    to take a note on some specialty. This can be done in any of the
+	    translation containern of the text. <br>
+	    Once added you can also remove them individually in case
+	    there's no need for the entry or delete the whole list.<br>
+	    When you feel your vocabulary list is long enough for the
+	    moment and you want to take it with you, go to the vocab
+	    sheet and click the Download-button - your Browser will
+	    supply you with a HTML-version of the current collection.
+	  </p>
+	  <h3>Thanks</h3>
+	  <p>
+	    Thanks to all those, who tirelessly assisted me building this
+	    page, no matter how discouraging my problems and questions
+	    were. <br>
+	    <small>(And of course to those I left without me working on
+	      it!)</small>
+	  </p>
+      </article>
+
+    </div>
+
+    
+    <!-- CONTACT AND TIMESTAMP -->
+    <footer>
+      <address>
+        by
+	<a href="mailto:gesina.schwalbe@googlemail.com">Gesina Schwalbe</a>
+      </address>
+      last edited: <time>2014-10-23 20:30</time>
+    </footer>
+    
+
+    <!-- SCRIPTS -->
+    <!--   jQuery -->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.js"></script>
+    <!--   own script -->
+    <script src="portdict.js"></script>
+    
+  </BODY>
+
+  
+</HTML>

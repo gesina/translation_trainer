@@ -1,0 +1,21 @@
+Dies ist ein Testtext in verschiedenen Sprachen:
+
+Deutsch ++++++++++
+Mit Hilfe des Blindtextes kann die Verteilung des Textes auf der Seite (Layout oder Satzspiegel) sowie Lesbarkeit und Platzbedarf der verwendeten Schriftarten (Typografie) beurteilt werden. Er besteht aus einer mehr oder minder sinnlosen Folge von Wörtern, oft auch nur aus wortähnlichen Silbenfolgen. Ein bekanntes Beispiel dafür ist das „lateinische“ Lorem ipsum. Komponisten von Liedern benutzen Blindtexte beim Komponieren von Melodien und singen diese, bevor der Liedtext gedichtet wird.
+
+English ++++++++++
+Filler text (also placeholder text or dummy text) is text that shares some characteristics of a real written text, but is random or otherwise generated. It may be used to display a sample of fonts, generate text for testing, or to spoof an e-mail spam filter. The process of using filler text is sometimes called greeking, although the text itself may be nonsense, or largely Latin, as in Lorem ipsum.
+
+Lingua Latina ++++++++++
+Carpitur adclivis per muta silentia trames,
+arduus, obscurus, caligine densus opaca.
+Nec procul afuerunt telluris margine summae:
+Hic, ne deficeret, metuens avidusque videndi
+flexit amans oculos; et protinus illa relapsa est.
+Iamque iterum moriens non est de coniuge quicquam
+questa suo (quid enim nisi se quereretur amatam?)
+supremumque "vale", quod iam vix auribus ille
+acciperet, dixit revolutaque rursus eodem est. 
+
+Français  ++++++++++
+ Le langage est la capacité d'exprimer une pensée et de communiquer au moyen d'un système de signes (vocaux, gestuel, graphiques, tactiles, olfactifs, etc.) doté d'une sémantique, et le plus souvent d'une syntaxe (mais ce n'est pas systématique1). Plus couramment, le langage est un moyen de communication.

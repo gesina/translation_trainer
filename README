@@ -1,0 +1,100 @@
+**********************************************
+*
+*	This is the README file
+*	for the HTML5-project
+*	-- TRANSLATION TRAINER --
+*
+*	by Gesina Schwalbe
+*
+**********************************************
+
+MOTIVATION
+**************************
+
+The Translation Trainer is intended to be a little assistant for
+those who like reading texts in foreign languages but still have
+problems with the vocabulary.
+The main idea is to ensure that no ongoing looking up words in a
+dictionary or googling them interrupts the studies of the text.
+One will (hopefully) find this intention reflected in the rather
+simple than overloaded or distracting design made mainly for
+reader-friendly screen-sizes and in eye-frienly brightness.
+
+The Page is based on AJAX-queries to Glosbe-Dictionary, the only
+really working and large enough free online dictionary with
+AJAX-support I could find:
+
+https://glosbe.com/
+
+
+
+STRUCTURE
+**************************
+Code as well as page are roughly structured in:
+
+#1 INPUT
+   a) text input:
+      - elements: text input field, button "GO"
+      - text extraction:
+      	     * splitting input text in sections of MAX_PARLENGTH=2000 (split_str)
+	     * save sections in sessionStorage (store_par)
+	     * create next visible section (create_output):
+	        extracts via Regular Expressions every word out of the
+   	        given text, puts it in a <span> and this into a <div> with
+   		class word_div; no word charakters are inserted
+   		inbetween;
+   b) file extraction:
+      - elements: input type file, button "Load"
+      -  first gets the text via FileReader obj:
+	     * recursively reads all files in the input-list
+	     * rest same as above
+   c) language selection:
+      - elements: seletion tags in the navigation bar and two text inputs
+      - individual language select is possible through option "type
+         ..." which triggers the correspondent input field to
+   	 show; input has to be the according ISO 639-3 language code;
+   	 (langfrom, langto); 
+      
+
+#2 TRANSLATION OUTPUT (for translation bar on the left and the words):
+   a) init of translation <div> for touched word:
+      - creation only on first touch or if language has changed
+      	(init_transl, create_transl)
+   b) AJAX-query for word the cursor touched:
+      - generate needed settings (settings, get_data_Glosbe,
+      	within button_transl00-event)
+      - send to Glosbe-Dictionary
+   c) interpretation (interpret_data_Glosbe):
+      - workaround for Glosbe's case sensitivity
+      - picking of every given translation with examples and
+      	descriptions:
+		* create list element with click-binding to being
+   		  added to vocab sheet	
+		* each in one li and this in the translation list;
+		* if none available giving warning;
+    d) display:
+       - display dependend on cursor position:
+       	 	 * above half of word: container above
+		 * below half of word: container below
+
+#3 VOCABULARY
+   a) input:
+      - from every word-translation-container (also the one on the
+      	left) by clicking translation
+      - from alternative input field in word-translation-containern
+      	(individual translations for given word)
+      - from alternative input under "Vocab"
+      	(individual entry, also notes)
+   b) deletion:
+      - individually: "X"-button in voc_div
+      - all: "clear all"-button
+   c) HTML-download:
+      - creation of the text for the new HTML-file (without JavaScript)
+        (download_html_style, html_prefix, html_suffix, vocab_to_html)
+      - download via URI-encoded link (create_vocab_download)
+
+
+
+	
+	
+   
